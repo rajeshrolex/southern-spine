@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Phone, Mail, Clock, Award, Users, Heart, ChevronRight, Star, CheckCircle, ArrowRight, Quote, Facebook, Instagram, Linkedin, ArrowUp, Zap, MapPin, Menu, X } from 'lucide-react';
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
+import { Phone, Mail, Clock, Award, Users, Heart, ChevronRight, Star, CheckCircle, ArrowRight, Quote, Facebook, Instagram, Linkedin, ArrowUp, Zap, MapPin, Menu, X, Brain, Stethoscope, ShieldCheck, History, Activity, LifeBuoy, ChevronDown } from 'lucide-react';
 
 const HomePage = () => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -101,27 +101,160 @@ const HomePage = () => {
       title: "Predict",
       subtitle: "Dive Deep Into Your Story",
       description: "Tackle a comprehensive exploration of your well-being at Southern Spine. Uncover the intricacies of your health, anticipate potential challenges, and reveal hidden strengths.",
-      icon: "🔍",
-      color: "from-blue-500 to-cyan-500"
+      icon: <Brain className="w-8 h-8" />,
+      image: "/images/doctor.jpg",
+      color: "from-brandBlue to-brandBlue/80"
     },
     {
       title: "Prevent",
       subtitle: "Empowering You for a Lifetime of Well-Being",
       description: "Take a proactive approach to your well-being with our specialized care. Address the core of your condition through personalized exercises and injury-prevention strategies.",
-      icon: "🛡️",
-      color: "from-green-500 to-emerald-500"
+      icon: <ShieldCheck className="w-8 h-8" />,
+      image: "/images/post-surgical.jpg",
+      color: "from-brandOrange to-brandOrange/80"
     },
     {
       title: "Perform",
       subtitle: "Ignite Your Full Potential",
       description: "Experience tailored rehabilitation, collaborative goal-setting, and expert guidance. Navigate sport-specific training to unleash your complete potential.",
-      icon: "⚡",
-      color: "from-purple-500 to-pink-500"
+      icon: <Activity className="w-8 h-8" />,
+      image: "/images/joint-pain.jpg",
+      color: "from-brandBlue to-brandOrange"
     }
   ];
 
+  // Internal sub-component for premium interactive cards
+  const InteractiveCard = ({ condition, index }) => {
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+
+    const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
+    const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+
+    // Spotlight effect tracking
+    const glowX = useTransform(mouseX, [-0.5, 0.5], [0, 100]);
+    const glowY = useTransform(mouseY, [-0.5, 0.5], [0, 100]);
+
+    function onMouseMove(event) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      mouseX.set(x);
+      mouseY.set(y);
+    }
+
+    function onMouseLeave() {
+      mouseX.set(0);
+      mouseY.set(0);
+    }
+
+    return (
+      <motion.div
+        className="group relative h-full perspective-1000"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: index * 0.1, duration: 0.8 }}
+      >
+        <motion.div
+          style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+          onMouseMove={onMouseMove}
+          onMouseLeave={onMouseLeave}
+          className="relative h-full bg-white/10 backdrop-blur-xl rounded-[2.5rem] border border-white/20 shadow-2xl overflow-hidden transition-all duration-300"
+        >
+          {/* Dynamic Spotlight Glow */}
+          <motion.div
+            className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            style={{
+              background: `radial-gradient(600px circle at var(--x) var(--y), rgba(46,67,134,0.15), transparent 40%)`,
+              "--x": useTransform(glowX, (v) => `${v}%`),
+              "--y": useTransform(glowY, (v) => `${v}%`),
+            }}
+          />
+
+          {/* Background Image with Parallax */}
+          <div className="h-52 overflow-hidden relative">
+            <motion.img
+              src={condition.image}
+              alt={condition.title}
+              style={{
+                scale: 1.1,
+                x: useTransform(mouseX, [-0.5, 0.5], [10, -10]),
+                y: useTransform(mouseY, [-0.5, 0.5], [10, -10]),
+              }}
+              className="w-full h-full object-cover transition-transform duration-1000 ease-out"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
+
+            {/* Floating Icon with 3D Pop */}
+            <div className="absolute -bottom-5 right-6" style={{ transform: "translateZ(60px)" }}>
+              <motion.div
+                className="bg-white p-4 rounded-2xl shadow-xl text-brandBlue border border-slate-50"
+                whileHover={{ y: -8, rotate: 15, scale: 1.1 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
+                {condition.icon}
+              </motion.div>
+            </div>
+
+            <div className="absolute bottom-5 left-6" style={{ transform: "translateZ(30px)" }}>
+              <h3 className="text-xl font-black text-white tracking-tight">{condition.title}</h3>
+            </div>
+          </div>
+
+          {/* Content with Staggered Elements */}
+          <div className="p-7 flex flex-col h-full" style={{ transform: "translateZ(20px)" }}>
+            <motion.p
+              className="text-slate-500 text-[13px] mb-6 font-bold italic leading-relaxed line-clamp-2"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              {condition.description}
+            </motion.p>
+
+            <div className="space-y-3 mb-6 flex-grow">
+              {condition.conditions.map((item, i) => (
+                <motion.div
+                  key={i}
+                  className="flex items-center text-[13px] text-slate-700 font-black group/item"
+                  initial={{ opacity: 0, x: -15 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 + (i * 0.1) }}
+                >
+                  <div className="w-1.5 h-1.5 rounded-full bg-brandOrange mr-3 group-hover/item:scale-125 transition-transform shadow-lg shadow-brandOrange/20"></div>
+                  {item}
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              className="mt-auto pt-6 border-t border-slate-100/50 flex items-center justify-between group/btn cursor-pointer"
+              whileHover={{ x: 8 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <span className="text-[12px] font-black text-brandBlue uppercase tracking-[0.2em] flex items-center">
+                Full Coverage
+                <motion.div
+                  className="ml-2"
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                >
+                  <ArrowRight className="w-5 h-5 text-brandOrange" />
+                </motion.div>
+              </span>
+            </motion.div>
+          </div>
+
+          {/* Holographic Reflection Layer */}
+          <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/5 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+        </motion.div>
+      </motion.div>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white overflow-x-hidden">
       {/* Navigation Header */}
       <motion.header
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled || isMenuOpen ? 'bg-white shadow-lg' : 'bg-transparent'
@@ -133,14 +266,17 @@ const HomePage = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <motion.div
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 cursor-pointer"
               whileHover={{ scale: 1.05 }}
               onClick={() => setIsMenuOpen(false)}
             >
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-brandBlue rounded-full flex items-center justify-center shadow-lg shadow-brandBlue/20">
+                <Heart className="w-6 h-6 text-brandOrange" />
               </div>
-              <span className="text-xl font-bold text-gray-800">Southern Spine</span>
+              <div className="text-xl font-bold tracking-tight">
+                <span className="text-brandBlue uppercase">Southern</span>{" "}
+                <span className="text-brandOrange uppercase">Spine</span>
+              </div>
             </motion.div>
 
             {/* Desktop Navigation */}
@@ -149,17 +285,18 @@ const HomePage = () => {
                 <motion.a
                   key={item.name}
                   href={item.href}
-                  className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                  className="text-gray-700 hover:text-brandBlue transition-colors font-medium relative group"
                   whileHover={{ y: -2 }}
                 >
                   {item.name}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brandOrange transition-all duration-300 group-hover:w-full"></span>
                 </motion.a>
               ))}
             </nav>
 
             <div className="flex items-center space-x-4">
               <motion.button
-                className="hidden md:flex bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-lg transition-all duration-300 items-center space-x-2"
+                className="hidden md:flex bg-gradient-to-r from-brandBlue to-brandBlue text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-xl hover:shadow-brandBlue/20 transition-all duration-300 items-center space-x-2 border-2 border-brandBlue hover:bg-white hover:text-brandBlue"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -169,11 +306,11 @@ const HomePage = () => {
 
               {/* Mobile Menu Toggle */}
               <button
-                className="lg:hidden p-2 text-gray-700 hover:text-blue-600 transition-colors"
+                className="lg:hidden p-2 text-gray-700 hover:text-secondary-500 transition-colors"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="Toggle menu"
               >
-                {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                {isMenuOpen ? <X size={28} className="text-brandBlue" /> : <Menu size={28} className="text-brandBlue" />}
               </button>
             </div>
           </div>
@@ -190,17 +327,18 @@ const HomePage = () => {
               <motion.a
                 key={item.name}
                 href={item.href}
-                className="text-2xl font-bold text-gray-800 hover:text-blue-600 transition-colors"
+                className="text-2xl font-bold text-gray-800 hover:text-brandBlue transition-colors flex items-center justify-between group"
                 initial={{ x: -20, opacity: 0 }}
                 animate={isMenuOpen ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }}
                 transition={{ delay: index * 0.1 }}
                 onClick={() => setIsMenuOpen(false)}
               >
-                {item.name}
+                <span>{item.name}</span>
+                <ChevronRight className="w-6 h-6 text-brandOrange opacity-0 group-hover:opacity-100 transition-all" />
               </motion.a>
             ))}
             <motion.button
-              className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center space-x-3"
+              className="bg-brandBlue text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-brandBlue/20 flex items-center justify-center space-x-3"
               initial={{ y: 20, opacity: 0 }}
               animate={isMenuOpen ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
               transition={{ delay: 0.5 }}
@@ -213,11 +351,24 @@ const HomePage = () => {
       </motion.header>
 
       {/* Hero Section */}
-      <section id="home" className="pt-24 min-h-screen flex items-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50 opacity-50"></div>
+      <section id="home" className="pt-24 min-h-screen flex items-center relative overflow-hidden bg-brandBlue">
+        {/* Cinematic Video Background */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source src="/images/herobg.mp4" type="video/mp4" />
+          </video>
+          {/* Cinematic Dark Overlay for Maximum Readability */}
+          <div className="absolute inset-0 bg-black/60"></div>
+        </div>
 
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="container mx-auto px-4 relative z-10 py-12 lg:py-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             <motion.div
               className="space-y-8 text-center lg:text-left"
               initial={{ opacity: 0, x: -50 }}
@@ -225,20 +376,20 @@ const HomePage = () => {
               transition={{ duration: 0.8 }}
             >
               <motion.h1
-                className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight"
+                className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-2xl"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
                 Visit Our{" "}
-                <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                <span className="text-brandOrange underline decoration-white/20 underline-offset-8 drop-shadow-md">
                   Spine & Joint
                 </span>{" "}
                 Clinic
               </motion.h1>
 
               <motion.p
-                className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0"
+                className="text-lg sm:text-xl text-white font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed drop-shadow-lg"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
@@ -253,17 +404,17 @@ const HomePage = () => {
                 transition={{ delay: 0.6 }}
               >
                 <motion.button
-                  className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-3 w-full sm:w-auto"
+                  className="bg-brandBlue text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-3 w-full sm:w-auto"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Phone className="w-5 h-5" />
                   <span>Call Now</span>
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 text-brandOrange" />
                 </motion.button>
 
                 <motion.button
-                  className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-full font-semibold text-lg hover:border-blue-500 hover:text-blue-600 transition-all duration-300 flex items-center justify-center space-x-3 w-full sm:w-auto"
+                  className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-brandBlue transition-all duration-300 flex items-center justify-center space-x-3 w-full sm:w-auto"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -273,41 +424,41 @@ const HomePage = () => {
               </motion.div>
 
               <motion.div
-                className="flex flex-wrap items-center justify-center lg:justify-start gap-8 pt-4"
+                className="flex flex-wrap items-center justify-center lg:justify-start gap-4 lg:gap-8 pt-2 lg:pt-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
               >
-                <div className="flex items-center space-x-2">
-                  <Users className="w-5 h-5 text-blue-600" />
-                  <span className="text-gray-700 font-medium">5000+ Happy Patients</span>
+                <div className="flex items-center space-x-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-lg">
+                  <Users className="w-5 h-5 text-white" />
+                  <span className="text-white font-bold">5000+ Happy Patients</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Award className="w-5 h-5 text-blue-600" />
-                  <span className="text-gray-700 font-medium">11+ Years Experience</span>
+                <div className="flex items-center space-x-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-brandOrange/30 shadow-lg">
+                  <Award className="w-5 h-5 text-brandOrange" />
+                  <span className="text-white font-bold">11+ Years Experience</span>
                 </div>
               </motion.div>
             </motion.div>
 
             <motion.div
-              className="relative order-first lg:order-last"
+              className="relative order-last lg:order-last"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
               <div className="relative w-full aspect-square sm:aspect-video lg:aspect-auto sm:min-h-[400px] lg:min-h-[500px]">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-3xl transform rotate-2 opacity-10"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl transform -rotate-2 opacity-10"></div>
+                <div className="absolute inset-0 bg-brandBlue rounded-3xl transform rotate-2 opacity-10"></div>
+                <div className="absolute inset-0 bg-brandOrange rounded-3xl transform -rotate-2 opacity-10"></div>
                 <div className="relative h-full overflow-hidden rounded-3xl shadow-2xl border-4 border-white">
                   <img
-                    src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=1200"
-                    alt="Professional Medical Care"
+                    src="/hero side.jpg"
+                    alt="Dr. Raghupathi Jadhav - Specialist Care"
                     className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-brandBlue/40 via-transparent to-transparent opacity-60"></div>
                   <div className="absolute bottom-6 left-6 right-6 text-white">
                     <div className="flex items-center space-x-2 mb-2">
-                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-brandOrange rounded-full flex items-center justify-center">
                         <Heart className="w-4 h-4 text-white" />
                       </div>
                       <span className="font-semibold text-sm">Expert Spine & Joint Care</span>
@@ -320,114 +471,435 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Doctor Profile Section */}
-      <section id="about" className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Meet Our Expert</h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-              Dr. Raghupathi Jadhav - Renowned healthcare professional with 11 years of experience
-            </p>
-          </motion.div>
+      {/* Doctor Profile Section - Artistic Redesign */}
+      <section id="about" className="py-24 lg:py-32 bg-white relative overflow-hidden">
+        {/* Background Accents */}
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-slate-50 skew-x-12 translate-x-1/2 z-0"></div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+
+            {/* Left: Artistic Image Layout */}
             <motion.div
-              className="relative"
+              className="lg:col-span-5 relative"
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
             >
-              <div className="relative aspect-[4/5] w-full max-w-md mx-auto">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-[2.5rem] transform rotate-6 opacity-10"></div>
-                <div className="absolute inset-0 bg-gradient-to-tr from-purple-600 to-blue-500 rounded-[2.5rem] transform -rotate-3 opacity-10"></div>
-                <div className="relative h-full w-full overflow-hidden rounded-[2rem] shadow-2xl border-8 border-white">
+              <div className="relative z-10">
+                {/* Floating Geometric Shapes */}
+                <div className="absolute -top-10 -left-10 w-32 h-32 bg-brandOrange/10 rounded-full blur-2xl animate-pulse"></div>
+                <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-brandBlue/10 rounded-full blur-3xl"></div>
+
+                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(46,67,134,0.25)] border-[12px] border-white">
                   <img
                     src="/images/doctor.jpg"
                     alt="Dr. Raghupathi Jadhav"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000"
                   />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-900/80 to-transparent p-8 text-white">
-                    <h3 className="text-2xl font-bold">Dr. Raghupathi Jadhav</h3>
-                    <p className="text-blue-200">Spine Adjustment Specialist</p>
+                  {/* Floating Identity Label */}
+                  <div className="absolute bottom-6 left-6 right-6 bg-brandBlue/90 backdrop-blur-md p-6 rounded-2xl text-white border border-white/20 shadow-2xl">
+                    <h3 className="text-xl font-black uppercase tracking-tighter">Dr. Raghupathi Jadhav</h3>
+                    <p className="text-brandOrange font-bold text-sm tracking-[0.2em] uppercase">Spine Adjustment Specialist</p>
                   </div>
                 </div>
-
-                {/* Decorative Elements */}
-                <motion.div
-                  className="absolute -bottom-6 -right-6 bg-white p-4 rounded-2xl shadow-xl border border-gray-100 hidden md:block"
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <Award className="w-6 h-6 text-green-600" />
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500">Best Doctor</div>
-                      <div className="text-sm font-bold text-gray-900">2018 Award</div>
-                    </div>
-                  </div>
-                </motion.div>
               </div>
+
+              {/* Experience Badge */}
+              <motion.div
+                className="absolute -top-6 -right-6 bg-white p-6 rounded-[2rem] shadow-2xl border border-slate-100 z-20 hidden md:block"
+                initial={{ scale: 0, rotate: -20 }}
+                whileInView={{ scale: 1, rotate: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5, type: "spring" }}
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-brandBlue/5 rounded-2xl flex items-center justify-center mb-2">
+                    <Award className="w-8 h-8 text-brandBlue" />
+                  </div>
+                  <div className="text-[10px] uppercase font-black tracking-widest text-slate-400">Awarded</div>
+                  <div className="text-xl font-black text-brandBlue">Best Doctor</div>
+                  <div className="text-xs font-bold text-brandOrange">2018 Honor</div>
+                </div>
+              </motion.div>
             </motion.div>
 
+            {/* Right: Premium Content Layout */}
             <motion.div
-              className="space-y-8"
+              className="lg:col-span-7 space-y-10"
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
             >
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Education & Qualifications</h3>
-                <div className="space-y-3">
+              <div className="space-y-4">
+                <span className="text-brandBlue font-black tracking-[0.3em] uppercase text-xs">Excellence in Healthcare</span>
+                <h2 className="text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1]">
+                  Meet Our <span className="text-brandBlue">Expert</span>
+                </h2>
+                <div className="w-20 h-2 bg-brandOrange rounded-full"></div>
+              </div>
+
+              <p className="text-xl text-slate-600 leading-relaxed font-medium">
+                With over a decade of hands-on expertise, Dr. Raghupathi Jadhav is a renowned leader in neuro-musculoskeletal recovery, merging international standards with personalized care.
+              </p>
+
+              {/* Premium Qualification Tags */}
+              <div className="space-y-6">
+                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Global Qualifications</h3>
+                <div className="flex flex-wrap gap-3">
                   {[
-                    "MASTER OF CHIROPRACTIC (SWEDEN)",
-                    "D.O OSTEOPATHY (CANADA)",
-                    "FDM.FASCIAL DISTORTION MODEL (GERMANY)",
-                    "BACHELOR OF PHYSIOTHERAPY"
-                  ].map((qualification, index) => (
+                    { text: "Master of Chiropractic", location: "Sweden", color: "blue" },
+                    { text: "D.O Osteopathy", location: "Canada", color: "orange" },
+                    { text: "FDM Model", location: "Germany", color: "blue" },
+                    { text: "Physiotherapy", location: "India", color: "orange" }
+                  ].map((q, i) => (
                     <motion.div
-                      key={index}
-                      className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg"
-                      initial={{ opacity: 0, x: 20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.1 }}
+                      key={i}
+                      className={`px-6 py-3 rounded-full border shadow-sm flex items-center space-x-3 group cursor-default transition-all ${q.color === 'blue'
+                        ? 'bg-blue-50/50 border-blue-100 hover:bg-blue-100 hover:border-brandBlue/30'
+                        : 'bg-orange-50/50 border-orange-100 hover:bg-orange-100 hover:border-brandOrange/30'
+                        }`}
+                      whileHover={{ y: -3 }}
                     >
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">{qualification}</span>
+                      <CheckCircle className={`w-5 h-5 ${q.color === 'blue' ? 'text-brandBlue' : 'text-brandOrange'}`} />
+                      <span className="font-bold text-slate-800 text-sm whitespace-nowrap">
+                        {q.text} <span className="opacity-40 font-medium">({q.location})</span>
+                      </span>
                     </motion.div>
                   ))}
                 </div>
               </div>
 
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Clinical Experience</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  With over a decade of experience, Dr. Jadhav provides hands-on spinal manipulation and holistic healing approaches.
-                  The Best Doctors Award in 2018 recognized his commitment to patient well-being. His expertise includes specialized
-                  treatments like chiropractic and physiotherapy interventions.
-                </p>
+              {/* Animated Stats Bar */}
+              <div className="grid grid-cols-3 gap-8 pt-8 border-t border-slate-100">
+                {[
+                  { label: "Years Exp", value: "11+", color: "text-brandBlue" },
+                  { label: "Patients", value: "5000+", color: "text-brandOrange" },
+                  { label: "Success Rate", value: "99%", color: "text-brandBlue" }
+                ].map((stat, i) => (
+                  <div key={i} className="text-center lg:text-left group">
+                    <div className={`text-4xl font-black ${stat.color} mb-1 transition-transform group-hover:scale-110`}>{stat.value}</div>
+                    <div className="text-xs font-black uppercase tracking-widest text-slate-400">{stat.label}</div>
+                  </div>
+                ))}
               </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
-              <div className="flex items-center space-x-6 pt-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-600">11+</div>
-                  <div className="text-gray-600">Years Experience</div>
+
+      {/* Pain Conditions Section - Premium Redesign */}
+      <section className="py-20 lg:py-32 bg-slate-50/50 relative overflow-hidden">
+        {/* Cinematic Background Elements */}
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/40 rounded-full blur-[120px] -translate-y-1/2"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-brandOrange/5 rounded-full blur-[120px] translate-y-1/2"></div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            className="text-center mb-24"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <motion.span
+              className="text-brandOrange font-bold tracking-[0.3em] uppercase text-xs mb-6 block"
+              initial={{ opacity: 0, tracking: "0.1em" }}
+              whileInView={{ opacity: 1, tracking: "0.3em" }}
+              transition={{ duration: 1 }}
+            >
+              Specialized Care
+            </motion.span>
+            <h2 className="text-5xl md:text-6xl font-black text-slate-900 mb-8 tracking-tight">
+              Your <span className="text-brandBlue">Pain,</span> <span className="text-brandOrange">Our Expertise</span>
+            </h2>
+            <div className="w-24 h-1.5 bg-brandBlue mx-auto mb-8 rounded-full"></div>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium">
+              We provide advanced clinical assessment and personalized treatment plans for a wide range of neuro-musculoskeletal conditions.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+            {[
+              { ...painConditions[0], icon: <LifeBuoy className="w-8 h-8" />, color: "blue" },
+              { ...painConditions[1], icon: <Activity className="w-8 h-8" />, color: "cyan" },
+              { ...painConditions[2], icon: <Brain className="w-8 h-8" />, color: "purple" },
+              { ...painConditions[3], icon: <Zap className="w-8 h-8" />, color: "indigo" },
+              { ...painConditions[4], icon: <Stethoscope className="w-8 h-8" />, color: "emerald" },
+              { ...painConditions[5], icon: <ShieldCheck className="w-8 h-8" />, color: "orange" },
+              { ...painConditions[6], icon: <History className="w-8 h-8" />, color: "rose" },
+              { ...painConditions[7], icon: <ChevronDown className="w-8 h-8" />, color: "sky" },
+            ].map((condition, index) => (
+              <InteractiveCard key={index} condition={condition} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section - Super-Premium Overhaul */}
+      <section id="services" className="py-24 lg:py-32 bg-white relative overflow-hidden">
+        {/* Editorial Background Text */}
+        <div className="absolute top-1/2 left-0 w-full text-[20vw] font-black text-slate-50 leading-none select-none pointer-events-none -translate-y-1/2 opacity-50 uppercase tracking-tighter">
+          Excellence
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            className="text-center mb-24"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="text-brandBlue font-black tracking-[0.3em] uppercase text-xs mb-6 block">Our Methodology</span>
+            <h2 className="text-5xl lg:text-6xl font-black text-slate-900 mb-8 tracking-tight">
+              Start Your Journey to <span className="text-brandBlue">Better Health</span>
+            </h2>
+            <div className="w-24 h-2 bg-brandOrange mx-auto mb-8 rounded-full"></div>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium italic">
+              "A comprehensive, science-led approach to spine and joint care."
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
+            {services.map((service, index) => {
+              const mouseX = useMotionValue(0);
+              const mouseY = useMotionValue(0);
+
+              const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
+              const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+
+              const glowX = useTransform(mouseX, [-0.5, 0.5], [0, 100]);
+              const glowY = useTransform(mouseY, [-0.5, 0.5], [0, 100]);
+
+              function onMouseMove(event) {
+                const rect = event.currentTarget.getBoundingClientRect();
+                const x = (event.clientX - rect.left) / rect.width - 0.5;
+                const y = (event.clientY - rect.top) / rect.height - 0.5;
+                mouseX.set(x);
+                mouseY.set(y);
+              }
+
+              function onMouseLeave() {
+                mouseX.set(0);
+                mouseY.set(0);
+              }
+
+              return (
+                <motion.div
+                  key={index}
+                  className="relative group h-full perspective-1000"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.2, duration: 0.8 }}
+                >
+                  <motion.div
+                    style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+                    onMouseMove={onMouseMove}
+                    onMouseLeave={onMouseLeave}
+                    className="relative h-full bg-white/70 backdrop-blur-xl border border-slate-100 rounded-[3rem] overflow-hidden shadow-2xl hover:shadow-brandBlue/10 transition-all duration-700 flex flex-col"
+                  >
+                    {/* Dynamic Spotlight Glow */}
+                    <motion.div
+                      className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{
+                        background: `radial-gradient(600px circle at var(--x) var(--y), rgba(46,67,134,0.1), transparent 40%)`,
+                        "--x": useTransform(glowX, (v) => `${v}%`),
+                        "--y": useTransform(glowY, (v) => `${v}%`),
+                      }}
+                    />
+
+                    {/* Image Header */}
+                    <div className="h-64 overflow-hidden relative">
+                      <motion.img
+                        src={service.image}
+                        alt={service.title}
+                        style={{
+                          scale: 1.1,
+                          x: useTransform(mouseX, [-0.5, 0.5], [15, -15]),
+                          y: useTransform(mouseY, [-0.5, 0.5], [15, -15]),
+                        }}
+                        className="w-full h-full object-cover transition-transform duration-1000 ease-out"
+                      />
+                      <div className={`absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent`}></div>
+
+                      {/* Floating Number Backdrop */}
+                      <div className="absolute -top-4 -left-4 text-9xl font-black text-white/10 select-none group-hover:text-brandOrange/20 transition-colors duration-500 pointer-events-none">
+                        0{index + 1}
+                      </div>
+
+                      {/* Icon Container with 3D Pop */}
+                      <div className="absolute -bottom-6 left-10" style={{ transform: "translateZ(80px)" }}>
+                        <motion.div
+                          className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-2xl flex items-center justify-center text-white shadow-2xl border-4 border-white`}
+                          whileHover={{ y: -8, rotate: 12, scale: 1.1 }}
+                        >
+                          {service.icon}
+                        </motion.div>
+                      </div>
+                    </div>
+
+                    <div className="p-10 pt-12 flex flex-col flex-grow" style={{ transform: "translateZ(30px)" }}>
+                      <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight group-hover:text-brandBlue transition-colors">{service.title}</h3>
+                      <h4 className="text-brandOrange font-black uppercase text-xs tracking-widest mb-6">{service.subtitle}</h4>
+
+                      <p className="text-slate-600 leading-relaxed mb-10 font-medium text-sm flex-grow">
+                        {service.description}
+                      </p>
+
+                      <motion.button
+                        className={`mt-auto w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-white bg-gradient-to-r ${service.color} shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2`}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <span>Discover More</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </motion.button>
+                    </div>
+
+                    {/* Bottom Accent Glow */}
+                    <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-4 bg-gradient-to-r ${service.color} blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500`}></div>
+                  </motion.div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section - Premium Overhaul */}
+      <section id="contact" className="py-24 lg:py-32 bg-slate-50/30 relative overflow-hidden">
+        {/* Background Decorative Blobs */}
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-brandBlue/5 rounded-full blur-[120px] -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-brandOrange/5 rounded-full blur-[120px] translate-y-1/2"></div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            className="text-center mb-24"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="text-brandBlue font-black tracking-[0.3em] uppercase text-xs mb-6 block">Ready to start?</span>
+            <h2 className="text-5xl lg:text-6xl font-black text-slate-900 mb-8 tracking-tight">
+              Get in <span className="text-brandBlue">Touch</span>
+            </h2>
+            <div className="w-24 h-2 bg-brandBlue mx-auto mb-8 rounded-full"></div>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">
+              Take the first step towards a pain-free life. Our expert team is here to support your recovery.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 max-w-7xl mx-auto items-start">
+
+            {/* Left: Contact Info Cards */}
+            <motion.div
+              className="lg:col-span-5 space-y-6"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <h3 className="text-2xl font-black text-slate-900 mb-10 tracking-tight flex items-center">
+                Contact <span className="text-brandBlue ml-2">Channels</span>
+                <div className="ml-4 h-px flex-grow bg-slate-100"></div>
+              </h3>
+
+              {[
+                { icon: <Phone className="w-6 h-6" />, label: "Call Us Anytime", value: "+91 9700575616", desc: "Available Mon-Sat", color: "blue" },
+                { icon: <Mail className="w-6 h-6" />, label: "Email Support", value: "info@southernspine.in", desc: "Quick response time", color: "orange" },
+                { icon: <MapPin className="w-6 h-6" />, label: "Visit Clinic", value: "Southern Spine Clinic", desc: "Hyderabad, India", color: "blue" }
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  className="group flex items-center space-x-6 bg-white/50 backdrop-blur-md border border-white p-6 rounded-[2rem] hover:shadow-2xl hover:shadow-brandBlue/5 transition-all duration-500"
+                  whileHover={{ x: 10 }}
+                >
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl transition-all duration-500 ${item.color === 'blue' ? 'bg-brandBlue text-white group-hover:bg-brandBlue/90' : 'bg-brandOrange text-white'
+                    }`}>
+                    {item.icon}
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{item.label}</div>
+                    <div className="text-lg font-black text-slate-900 leading-none mb-1">{item.value}</div>
+                    <div className="text-xs font-bold text-slate-500">{item.desc}</div>
+                  </div>
+                </motion.div>
+              ))}
+
+              {/* Working Hours Floating Badge */}
+              <div className="mt-12 p-8 bg-gradient-to-br from-brandBlue to-brandBlue/80 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000"></div>
+                <div className="relative z-10 flex items-center space-x-6">
+                  <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                    <Clock className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-black tracking-tight">Clinic Timing</h4>
+                    <p className="text-blue-100 font-bold">Mon - Sat: 9:00 AM - 7:00 PM</p>
+                  </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-600">5000+</div>
-                  <div className="text-gray-600">Patients Treated</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-600">2018</div>
-                  <div className="text-gray-600">Best Doctor Award</div>
+              </div>
+            </motion.div>
+
+            {/* Right: Glassmorphism Appointment Form */}
+            <motion.div
+              className="lg:col-span-7"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="relative p-[1px] rounded-[3rem] bg-gradient-to-br from-white via-white to-brandOrange/20 shadow-2xl">
+                <div className="bg-white/90 backdrop-blur-2xl rounded-[3rem] p-10 lg:p-14">
+                  <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Quick Appointment</h3>
+                  <p className="text-slate-500 font-bold mb-10">Fill the form below and we'll reach out shortly.</p>
+
+                  <form className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Full Name</label>
+                        <input
+                          type="text"
+                          placeholder="Ex: John Doe"
+                          className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Phone Number</label>
+                        <input
+                          type="tel"
+                          placeholder="+91 000 000 0000"
+                          className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Your Message</label>
+                      <textarea
+                        placeholder="Briefly describe your condition..."
+                        rows={4}
+                        className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300 resize-none"
+                      />
+                    </div>
+
+                    <motion.button
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-brandBlue to-brandBlue/90 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-brandBlue/20 hover:shadow-2xl hover:shadow-brandBlue/40 transition-all duration-500 relative overflow-hidden group"
+                      whileHover={{ y: -5 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <span className="relative z-10">Send Appointment Request</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-brandOrange to-brandOrange/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </motion.button>
+                  </form>
+
+                  <p className="text-center mt-8 text-[10px] font-bold text-slate-400 leading-relaxed max-w-sm mx-auto">
+                    By submitting this form, you agree to our contact terms. We respect your privacy and will never share your details.
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -436,7 +908,7 @@ const HomePage = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
+      <section id="testimonials" className="py-16 lg:py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl -mr-48 -mt-48"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-100/30 rounded-full blur-3xl -ml-48 -mb-48"></div>
 
@@ -447,8 +919,8 @@ const HomePage = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="text-blue-600 font-bold tracking-widest uppercase text-sm mb-4 block">Testimonials</span>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">Patient <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Success Stories</span></h2>
+            <span className="text-brandBlue font-bold tracking-widest uppercase text-sm mb-4 block underline decoration-brandOrange decoration-2 underline-offset-8">Testimonials</span>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">Patient <span className="text-brandBlue">Success</span> <span className="text-brandOrange">Stories</span></h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
               Experience the journey of recovery through the words of those who have regained their active lifestyles.
             </p>
@@ -462,7 +934,7 @@ const HomePage = () => {
               </div>
 
               <motion.div
-                className="bg-white rounded-[3rem] shadow-2xl p-8 lg:p-16 border border-gray-100 relative overflow-hidden"
+                className="bg-white rounded-3xl lg:rounded-[3rem] shadow-2xl p-6 lg:p-16 border border-gray-100 relative overflow-hidden"
                 key={activeTestimonial}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -471,16 +943,16 @@ const HomePage = () => {
                 <div className="grid lg:grid-cols-12 gap-12 items-center">
                   <div className="lg:col-span-4 flex flex-col items-center text-center">
                     <div className="relative mb-6">
-                      <div className="w-32 h-32 bg-gradient-to-br from-blue-600 to-cyan-400 rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-xl">
+                      <div className="w-32 h-32 bg-brandBlue rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-xl shadow-brandBlue/20">
                         {testimonials[activeTestimonial].name.charAt(0)}
                       </div>
-                      <div className="absolute -bottom-2 -right-2 bg-yellow-400 p-2 rounded-full shadow-lg border-4 border-white">
+                      <div className="absolute -bottom-2 -right-2 bg-brandOrange p-2 rounded-full shadow-lg border-4 border-white">
                         <Star size={16} fill="white" className="text-white" />
                       </div>
                     </div>
                     <div>
-                      <h4 className="text-2xl font-bold text-gray-900">{testimonials[activeTestimonial].name}</h4>
-                      <p className="text-blue-600 font-medium">{testimonials[activeTestimonial].time}</p>
+                      <h4 className="text-2xl font-bold text-brandBlue">{testimonials[activeTestimonial].name}</h4>
+                      <p className="text-brandOrange font-bold">{testimonials[activeTestimonial].time}</p>
                     </div>
                   </div>
 
@@ -504,7 +976,7 @@ const HomePage = () => {
                       key={index}
                       onClick={() => setActiveTestimonial(index)}
                       className={`h-2.5 rounded-full transition-all duration-500 ${index === activeTestimonial
-                        ? 'bg-blue-600 w-12'
+                        ? 'bg-secondary-500 w-12'
                         : 'bg-gray-200 hover:bg-gray-300 w-2.5'
                         }`}
                       aria-label={`Go to testimonial ${index + 1}`}
@@ -517,247 +989,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Pain Conditions Section */}
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
-
-        <div className="container mx-auto px-4 relative">
-          <motion.div
-            className="text-center mb-20"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <span className="text-blue-600 font-bold tracking-widest uppercase text-sm mb-4 block">Specialized Care</span>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">Your Pain, <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Our Expertise</span></h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              We provide advanced clinical assessment and personalized treatment plans for a wide range of neuro-musculoskeletal conditions.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { ...painConditions[0], icon: <Users className="w-6 h-6" />, color: "blue" },
-              { ...painConditions[1], icon: <Heart className="w-6 h-6" />, color: "cyan" },
-              { ...painConditions[2], icon: <Award className="w-6 h-6" />, color: "purple" },
-              { ...painConditions[3], icon: <Star className="w-6 h-6" />, color: "indigo" },
-              { ...painConditions[4], icon: <CheckCircle className="w-6 h-6" />, color: "emerald" },
-              { ...painConditions[5], icon: <Clock className="w-6 h-6" />, color: "orange" },
-              { ...painConditions[6], icon: <Phone className="w-6 h-6" />, color: "rose" },
-              { ...painConditions[7], icon: <Mail className="w-6 h-6" />, color: "sky" },
-            ].map((condition, index) => (
-              <motion.div
-                key={index}
-                className="group relative bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <div className="h-48 overflow-hidden relative">
-                  <img
-                    src={condition.image}
-                    alt={condition.title}
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4">
-                    <div className="bg-white/90 backdrop-blur-md p-2 rounded-xl shadow-lg">
-                      {condition.icon}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-8">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{condition.title}</h3>
-                  <p className="text-gray-600 text-sm mb-6 line-clamp-2 leading-relaxed">{condition.description}</p>
-
-                  <div className="space-y-2">
-                    {condition.conditions.map((item, i) => (
-                      <div key={i} className="flex items-center text-xs text-gray-500 font-medium">
-                        <ChevronRight className="w-3 h-3 text-blue-500 mr-2 flex-shrink-0" />
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <motion.div
-                    className="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity"
-                    whileHover={{ x: 5 }}
-                  >
-                    <span className="text-sm font-bold text-blue-600">View Details</span>
-                    <ArrowRight className="w-4 h-4 text-blue-600" />
-                  </motion.div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section id="services" className="py-20 bg-gradient-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-4">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Start Your Journey to Better Health</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our comprehensive approach to spine and joint care
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <motion.div
-                key={index}
-                className="relative group"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-              >
-                <div className="relative h-full">
-                  <div className={`absolute inset-0 bg-gradient-to-r ${service.color} rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
-                  <div className="relative bg-white border border-gray-200 rounded-2xl p-8 h-full hover:shadow-2xl transition-all duration-300">
-                    <div className={`w-16 h-16 bg-gradient-to-r ${service.color} rounded-2xl flex items-center justify-center text-3xl mb-6`}>
-                      {service.icon}
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">{service.title}</h3>
-                    <h4 className="text-lg font-semibold text-gray-700 mb-4">{service.subtitle}</h4>
-                    <p className="text-gray-600 leading-relaxed mb-6">{service.description}</p>
-                    <motion.button
-                      className={`bg-gradient-to-r ${service.color} text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 flex items-center space-x-2`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <span>Learn More</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Get in Touch</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Ready to start your journey to a pain-free life? Contact us today.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            <motion.div
-              className="space-y-8"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h3>
-                <div className="space-y-4">
-                  <motion.div
-                    className="flex items-center space-x-4 bg-gray-50 p-4 rounded-lg"
-                    whileHover={{ scale: 1.02 }}
-                  >
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                      <Phone className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900">Phone</div>
-                      <div className="text-gray-600">+91 9700575616</div>
-                      <div className="text-gray-600">+91 9464108108</div>
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    className="flex items-center space-x-4 bg-gray-50 p-4 rounded-lg"
-                    whileHover={{ scale: 1.02 }}
-                  >
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                      <Mail className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900">Email</div>
-                      <div className="text-gray-600">info@southernspine.in</div>
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    className="flex items-center space-x-4 bg-gray-50 p-4 rounded-lg"
-                    whileHover={{ scale: 1.02 }}
-                  >
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900">Working Hours</div>
-                      <div className="text-gray-600">Mon - Sat: 9:00 AM - 7:00 PM</div>
-                      <div className="text-gray-600">Sunday: Closed</div>
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Quick Appointment</h3>
-                <form className="space-y-4">
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Your Name"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type="tel"
-                      placeholder="Phone Number"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
-                    />
-                  </div>
-                  <div>
-                    <textarea
-                      placeholder="Describe your condition..."
-                      rows={4}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
-                    />
-                  </div>
-                  <motion.button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-4 rounded-lg font-semibold hover:shadow-xl transition-all duration-300"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Book Appointment
-                  </motion.button>
-                </form>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
       {/* Re-designed Professional Footer */}
       <footer className="bg-[#0f172a] text-white pt-24 pb-12 relative overflow-hidden">
         {/* Abstract Background Element */}
@@ -766,17 +997,20 @@ const HomePage = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
             {/* Column 1: Brand & About */}
-            <div className="space-y-6">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                  <Heart className="w-7 h-7 text-white" />
+            <div className="space-y-6 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start space-x-3">
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                  <Heart className="w-7 h-7 text-brandBlue" />
                 </div>
-                <span className="text-2xl font-bold tracking-tight">Southern Spine</span>
+                <div className="text-2xl font-bold tracking-tight">
+                  <span className="text-white">SOUTHERN</span>{" "}
+                  <span className="text-brandOrange">SPINE</span>
+                </div>
               </div>
-              <p className="text-slate-400 leading-relaxed">
+              <p className="text-slate-400 leading-relaxed max-w-sm mx-auto md:mx-0">
                 Premium specialized care for neuro-musculoskeletal conditions. We merge traditional expertise with modern treatments for optimal recovery.
               </p>
-              <div className="flex space-x-4">
+              <div className="flex justify-center md:justify-start space-x-4">
                 {[
                   { icon: <Facebook className="w-5 h-5" />, href: "#" },
                   { icon: <Instagram className="w-5 h-5" />, href: "#" },
@@ -785,7 +1019,7 @@ const HomePage = () => {
                   <motion.a
                     key={i}
                     href={social.href}
-                    className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors duration-300"
+                    className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-brandOrange transition-colors duration-300"
                     whileHover={{ y: -4 }}
                   >
                     {social.icon}
@@ -796,15 +1030,15 @@ const HomePage = () => {
 
             {/* Column 2: Quick Links */}
             <div>
-              <h4 className="text-lg font-bold mb-8 relative inline-block">
+              <h4 className="text-lg font-bold mb-8 relative inline-block uppercase tracking-wider">
                 Quick Links
-                <span className="absolute -bottom-2 left-0 w-12 h-1 bg-blue-600 rounded-full"></span>
+                <span className="absolute -bottom-2 left-0 w-12 h-1 bg-brandOrange rounded-full"></span>
               </h4>
               <ul className="space-y-4">
                 {['Home', 'About Us', 'Services', 'Success Stories', 'Book Appointment'].map((link) => (
                   <li key={link}>
                     <a href={`#${link.toLowerCase().replace(' ', '')}`} className="text-slate-400 hover:text-white hover:translate-x-2 transition-all duration-300 flex items-center group">
-                      <ChevronRight className="w-4 h-4 text-blue-500 opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all" />
+                      <ChevronRight className="w-4 h-4 text-brandOrange opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all" />
                       {link}
                     </a>
                   </li>
@@ -814,15 +1048,15 @@ const HomePage = () => {
 
             {/* Column 3: Services */}
             <div>
-              <h4 className="text-lg font-bold mb-8 relative inline-block">
+              <h4 className="text-lg font-bold mb-8 relative inline-block uppercase tracking-wider">
                 Specialized Care
-                <span className="absolute -bottom-2 left-0 w-12 h-1 bg-blue-600 rounded-full"></span>
+                <span className="absolute -bottom-2 left-0 w-12 h-1 bg-brandOrange rounded-full"></span>
               </h4>
               <ul className="space-y-4">
                 {['Spine Adjustment', 'Joint Pain Treatment', 'Sciatica Care', 'Post-Op Rehab', 'Chronic Pain Management'].map((service) => (
                   <li key={service}>
                     <span className="text-slate-400 flex items-center">
-                      <Zap className="w-4 h-4 text-cyan-500 mr-2" />
+                      <Zap className="w-4 h-4 text-brandOrange mr-2" />
                       {service}
                     </span>
                   </li>
@@ -832,14 +1066,14 @@ const HomePage = () => {
 
             {/* Column 4: Contact */}
             <div>
-              <h4 className="text-lg font-bold mb-8 relative inline-block">
+              <h4 className="text-lg font-bold mb-8 relative inline-block uppercase tracking-wider">
                 Connect With Us
-                <span className="absolute -bottom-2 left-0 w-12 h-1 bg-blue-600 rounded-full"></span>
+                <span className="absolute -bottom-2 left-0 w-12 h-1 bg-brandOrange rounded-full"></span>
               </h4>
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-blue-600/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                    <MapPin className="w-5 h-5 text-blue-500" />
+                  <div className="w-10 h-10 bg-brandBlue/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                    <MapPin className="w-5 h-5 text-brandOrange" />
                   </div>
                   <div>
                     <p className="text-slate-400 text-sm">Our Location</p>
@@ -847,8 +1081,8 @@ const HomePage = () => {
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-blue-600/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                    <Phone className="w-5 h-5 text-blue-500" />
+                  <div className="w-10 h-10 bg-brandOrange/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                    <Phone className="w-5 h-5 text-brandOrange" />
                   </div>
                   <div>
                     <p className="text-slate-400 text-sm">Emergency Call</p>
