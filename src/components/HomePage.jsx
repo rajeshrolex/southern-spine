@@ -15,14 +15,6 @@ const HomePage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Services', href: '#services' },
-    { name: 'Testimonials', href: '#testimonials' },
-    { name: 'Contact', href: '#contact' },
-  ];
-
   const testimonials = [
     // ... rest of testimonials
     {
@@ -44,6 +36,22 @@ const HomePage = () => {
       rating: 5
     }
   ];
+
+  const navLinks = [
+    { name: 'Home', href: '#home' },
+    { name: 'About', href: '#about' },
+    { name: 'Services', href: '#services' },
+    { name: 'Testimonials', href: '#testimonials' },
+    { name: 'Contact', href: '#contact' },
+  ];
+
+  // Auto-scroll testimonials every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
 
   const painConditions = [
     {
@@ -102,7 +110,7 @@ const HomePage = () => {
       subtitle: "Dive Deep Into Your Story",
       description: "Tackle a comprehensive exploration of your well-being at Southern Spine. Uncover the intricacies of your health, anticipate potential challenges, and reveal hidden strengths.",
       icon: <Brain className="w-8 h-8" />,
-      image: "/images/doctor.jpg",
+      image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?q=80&w=2070&auto=format&fit=crop",
       color: "from-brandBlue to-brandBlue/80"
     },
     {
@@ -110,7 +118,7 @@ const HomePage = () => {
       subtitle: "Empowering You for a Lifetime of Well-Being",
       description: "Take a proactive approach to your well-being with our specialized care. Address the core of your condition through personalized exercises and injury-prevention strategies.",
       icon: <ShieldCheck className="w-8 h-8" />,
-      image: "/images/post-surgical.jpg",
+      image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop",
       color: "from-brandOrange to-brandOrange/80"
     },
     {
@@ -118,7 +126,7 @@ const HomePage = () => {
       subtitle: "Ignite Your Full Potential",
       description: "Experience tailored rehabilitation, collaborative goal-setting, and expert guidance. Navigate sport-specific training to unleash your complete potential.",
       icon: <Activity className="w-8 h-8" />,
-      image: "/images/joint-pain.jpg",
+      image: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?q=80&w=1974&auto=format&fit=crop",
       color: "from-brandBlue to-brandOrange"
     }
   ];
@@ -770,6 +778,89 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-12 lg:py-20 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-72 h-72 bg-blue-100/30 rounded-full blur-3xl -mr-36 -mt-36"></div>
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-cyan-100/30 rounded-full blur-3xl -ml-36 -mb-36"></div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="text-brandBlue font-bold tracking-widest uppercase text-[10px] mb-3 block underline decoration-brandOrange decoration-2 underline-offset-8">Testimonials</span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-4">Patient <span className="text-brandBlue">Success</span> <span className="text-brandOrange">Stories</span></h2>
+            <p className="text-base text-gray-600 max-w-xl mx-auto leading-relaxed">
+              Experience the journey of recovery through the words of those who have regained their active lifestyles.
+            </p>
+          </motion.div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="relative">
+              {/* Decorative Quote Mark */}
+              <div className="absolute -top-8 -left-6 text-blue-100 opacity-40 hidden lg:block">
+                <Quote size={80} fill="currentColor" />
+              </div>
+
+              <motion.div
+                className="bg-white rounded-2xl lg:rounded-[2.5rem] shadow-xl p-6 lg:p-12 border border-gray-100 relative overflow-hidden"
+                key={activeTestimonial}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="grid lg:grid-cols-12 gap-8 items-center">
+                  <div className="lg:col-span-4 flex flex-col items-center text-center">
+                    <div className="relative mb-4">
+                      <div className="w-24 h-24 bg-brandBlue rounded-full flex items-center justify-center text-3xl font-bold text-white shadow-lg shadow-brandBlue/20">
+                        {testimonials[activeTestimonial].name.charAt(0)}
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 bg-brandOrange p-1.5 rounded-full shadow-lg border-2 border-white">
+                        <Star size={12} fill="white" className="text-white" />
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-brandBlue">{testimonials[activeTestimonial].name}</h4>
+                      <p className="text-brandOrange font-bold text-xs">{testimonials[activeTestimonial].time}</p>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-8">
+                    <div className="flex mb-4 space-x-1 justify-center lg:justify-start">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={`w-3.5 h-3.5 ${i < testimonials[activeTestimonial].rating ? 'text-yellow-400 fill-current' : 'text-gray-200'}`} />
+                      ))}
+                    </div>
+                    <blockquote className="text-lg lg:text-xl text-gray-800 font-medium leading-relaxed mb-6 relative text-center lg:text-left">
+                      <span className="text-blue-600 text-2xl leading-none font-serif ml-[-1rem] mr-1">"</span>
+                      {testimonials[activeTestimonial].content}
+                      <span className="text-blue-600 text-2xl leading-none font-serif ml-1">"</span>
+                    </blockquote>
+                  </div>
+                </div>
+
+                <div className="mt-8 flex justify-center lg:justify-end space-x-2">
+                  {testimonials.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setActiveTestimonial(index)}
+                      className={`h-1.5 rounded-full transition-all duration-500 ${index === activeTestimonial
+                        ? 'bg-brandOrange w-8'
+                        : 'bg-gray-200 hover:bg-gray-300 w-1.5'
+                        }`}
+                      aria-label={`Go to testimonial ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section - Premium Overhaul */}
       <section id="contact" className="py-24 lg:py-32 bg-slate-50/30 relative overflow-hidden">
         {/* Background Decorative Blobs */}
@@ -903,88 +994,6 @@ const HomePage = () => {
                 </div>
               </div>
             </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-16 lg:py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl -mr-48 -mt-48"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-100/30 rounded-full blur-3xl -ml-48 -mb-48"></div>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            className="text-center mb-20"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <span className="text-brandBlue font-bold tracking-widest uppercase text-sm mb-4 block underline decoration-brandOrange decoration-2 underline-offset-8">Testimonials</span>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">Patient <span className="text-brandBlue">Success</span> <span className="text-brandOrange">Stories</span></h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Experience the journey of recovery through the words of those who have regained their active lifestyles.
-            </p>
-          </motion.div>
-
-          <div className="max-w-5xl mx-auto">
-            <div className="relative">
-              {/* Decorative Quote Mark */}
-              <div className="absolute -top-12 -left-8 text-blue-100 opacity-50 hidden lg:block">
-                <Quote size={120} fill="currentColor" />
-              </div>
-
-              <motion.div
-                className="bg-white rounded-3xl lg:rounded-[3rem] shadow-2xl p-6 lg:p-16 border border-gray-100 relative overflow-hidden"
-                key={activeTestimonial}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="grid lg:grid-cols-12 gap-12 items-center">
-                  <div className="lg:col-span-4 flex flex-col items-center text-center">
-                    <div className="relative mb-6">
-                      <div className="w-32 h-32 bg-brandBlue rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-xl shadow-brandBlue/20">
-                        {testimonials[activeTestimonial].name.charAt(0)}
-                      </div>
-                      <div className="absolute -bottom-2 -right-2 bg-brandOrange p-2 rounded-full shadow-lg border-4 border-white">
-                        <Star size={16} fill="white" className="text-white" />
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="text-2xl font-bold text-brandBlue">{testimonials[activeTestimonial].name}</h4>
-                      <p className="text-brandOrange font-bold">{testimonials[activeTestimonial].time}</p>
-                    </div>
-                  </div>
-
-                  <div className="lg:col-span-8">
-                    <div className="flex mb-6 space-x-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-5 h-5 ${i < testimonials[activeTestimonial].rating ? 'text-yellow-400 fill-current' : 'text-gray-200'}`} />
-                      ))}
-                    </div>
-                    <blockquote className="text-2xl lg:text-3xl text-gray-800 font-medium leading-snug mb-8 relative">
-                      <span className="text-blue-600 text-4xl leading-none font-serif absolute -left-6 -top-2">"</span>
-                      {testimonials[activeTestimonial].content}
-                      <span className="text-blue-600 text-4xl leading-none font-serif ml-1">"</span>
-                    </blockquote>
-                  </div>
-                </div>
-
-                <div className="mt-12 flex justify-center lg:justify-end space-x-3">
-                  {testimonials.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActiveTestimonial(index)}
-                      className={`h-2.5 rounded-full transition-all duration-500 ${index === activeTestimonial
-                        ? 'bg-secondary-500 w-12'
-                        : 'bg-gray-200 hover:bg-gray-300 w-2.5'
-                        }`}
-                      aria-label={`Go to testimonial ${index + 1}`}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            </div>
           </div>
         </div>
       </section>
