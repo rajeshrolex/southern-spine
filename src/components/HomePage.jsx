@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
-import { Phone, Mail, Clock, Award, Users, Heart, ChevronRight, Star, CheckCircle, ArrowRight, Quote, Facebook, Instagram, Linkedin, ArrowUp, Zap, MapPin, Menu, X, Brain, Stethoscope, ShieldCheck, History, Activity, LifeBuoy, ChevronDown, Globe } from 'lucide-react';
+import { Phone, Mail, Clock, Award, Users, Heart, ChevronRight, Star, CheckCircle, ArrowRight, Quote, Facebook, Instagram, Linkedin, ArrowUp, Zap, MapPin, Menu, X, Brain, Stethoscope, ShieldCheck, History, Activity, LifeBuoy, ChevronDown, Globe, ChevronLeft } from 'lucide-react';
 
 // Internal sub-component for premium interactive cards
 const InteractiveCard = ({ condition, index }) => {
@@ -351,23 +351,23 @@ const HomePage = () => {
       description: "Experience personalized chiropractic care with Dr. Ashok P. Kota at Activerehab. Our tailored treatments in Kondapur and Kompally ensure your spine aligns with your health goals. Rediscover mobility and comfort today!",
       icon: <Brain className="w-8 h-8" />,
       image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?q=80&w=2070&auto=format&fit=crop",
-      color: "from-brandBlue to-brandBlue/80"
+      color: "from-brandOrange to-brandOrange/80"
     },
     {
-      title: "Physiotherapy Sessions",
+      title: "Rehabilitation Therapy",
       subtitle: "Improved Movement",
-      description: "Step into a world of improved movement at Activerehab. Under Dr. Ashok P. Kota’s expert guidance in Hyderabad, our physiotherapy sessions are designed to strengthen and heal. Begin your journey to full recovery now!",
+      description: "Step into a world of improved movement at Activerehab. Under Dr. Ashok P. Kota's expert guidance in Hyderabad, our rehabilitation therapy sessions are designed to strengthen and heal. Begin your journey to full recovery now!",
       icon: <ShieldCheck className="w-8 h-8" />,
       image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop",
-      color: "from-brandOrange to-brandOrange/80"
+      color: "from-brandBlue to-brandBlue/80"
     },
     {
       title: "Posture Correction",
       subtitle: "Precise Corrections",
-      description: "Perfect your posture with precise corrections at Activerehab. Dr. Ashok P. Kota’s specialized approach in Kondapur and Kompally helps align your body and enhance wellbeing. Transform your posture and enhance your lifestyle!",
+      description: "Perfect your posture with precise corrections at Activerehab. Dr. Ashok P. Kota's specialized approach in Kondapur and Kompally helps align your body and enhance wellbeing. Transform your posture and enhance your lifestyle!",
       icon: <Activity className="w-8 h-8" />,
       image: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?q=80&w=1974&auto=format&fit=crop",
-      color: "from-brandBlue to-brandOrange"
+      color: "from-brandBlue to-brandBlue/80"
     }
   ];
 
@@ -385,17 +385,16 @@ const HomePage = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <motion.div
-              className="flex items-center space-x-2 cursor-pointer"
+              className="flex items-center space-x-3 cursor-pointer"
               whileHover={{ scale: 1.05 }}
               onClick={() => setIsMenuOpen(false)}
             >
-              <div className="w-10 h-10 bg-brandBlue rounded-full flex items-center justify-center shadow-lg shadow-brandBlue/20">
-                <Heart className="w-6 h-6 text-brandOrange" />
-              </div>
-              <div className="text-xl font-bold tracking-tight">
-                <span className="text-brandBlue uppercase">Activerehab</span>{" "}
-                <span className="text-brandOrange uppercase">Centre</span>
-              </div>
+              <img 
+                src="/images/logo.png" 
+                alt="Activerehab Logo" 
+                className="h-14 w-14 object-contain rounded-lg"
+              />
+            
             </motion.div>
 
             {/* Desktop Navigation */}
@@ -502,7 +501,7 @@ const HomePage = () => {
               >
                 Visit Our{" "}
                 <span className="text-brandOrange underline decoration-white/20 underline-offset-8 drop-shadow-md">
-                  Best Physiotherapist Chiropractic
+                  Best Chiropractic
                 </span>{" "}
                 Center
               </motion.h1>
@@ -513,7 +512,7 @@ const HomePage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                At Activerehab, we offer personalized treatment plans that focus on your unique health goals. As the best physiotherapist chiropractic center in Hyderabad, our team of experienced professionals is dedicated to helping you achieve optimal wellness.
+                At Activerehab, we offer personalized treatment plans that focus on your unique health goals. As the best chiropractic center in Hyderabad, our team of experienced professionals is dedicated to helping you achieve optimal wellness.
               </motion.p>
 
               <motion.div
@@ -667,7 +666,7 @@ const HomePage = () => {
               </div>
 
               <p className="text-xl text-slate-600 leading-relaxed font-medium">
-                Activerehab Chiropractic and Physiotherapy Centre is more than just a clinic—it’s your premier destination in Kondapur and Kompally, Hyderabad, where your health and comfort are our top priorities. As the best physiotherapist chiropractic center in Hyderabad, our expert team, led by Dr. Ashok P. Kota, is committed to providing personalized treatment plans tailored to your individual health needs.
+                Activerehab Chiropractic Centre is more than just a clinic—it's your premier destination in Kondapur and Kompally, Hyderabad, where your health and comfort are our top priorities. As the best chiropractic center in Hyderabad, our expert team, led by Dr. Ashok P. Kota, is committed to providing personalized treatment plans tailored to your individual health needs.
               </p>
 
               {/* Mission & Vision Section */}
@@ -685,7 +684,7 @@ const HomePage = () => {
                     <Activity className="w-5 h-5 mr-2" /> Our Vision
                   </h3>
                   <p className="text-slate-600 text-sm font-medium leading-relaxed">
-                    To Be a Leading Provider of Innovative and Patient-Centered Chiropractic and Physiotherapy
+                    To Be a Leading Provider of Innovative and Patient-Centered Chiropractic Care
                   </p>
                 </div>
               </div>
@@ -696,7 +695,7 @@ const HomePage = () => {
                 <div className="flex flex-wrap gap-3">
                   {[
                     { text: "Master of Chiropractic", location: "Certified", color: "blue" },
-                    { text: "Physiotherapy", location: "Expert", color: "orange" },
+                    { text: "Rehabilitation Therapy", location: "Expert", color: "orange" },
                     { text: "Holistic Care", location: "Patient-Centered", color: "blue" },
                     { text: "Pain Relief", location: "Specialist", color: "orange" }
                   ].map((q, i) => (
@@ -881,6 +880,28 @@ const HomePage = () => {
                   </div>
                 </div>
 
+                {/* Navigation Arrows */}
+                <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 z-10">
+                  <button
+                    onClick={() => setActiveTestimonial(prev => (prev - 1 + testimonials.length) % testimonials.length)}
+                    className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-brandBlue hover:text-white transition-all duration-300 border border-gray-200"
+                    aria-label="Previous testimonial"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                <div className="absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                  <button
+                    onClick={() => setActiveTestimonial(prev => (prev + 1) % testimonials.length)}
+                    className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-brandBlue hover:text-white transition-all duration-300 border border-gray-200"
+                    aria-label="Next testimonial"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                </div>
+
+                {/* Dots Indicator */}
                 <div className="mt-8 flex justify-center lg:justify-end space-x-2">
                   {testimonials.map((_, index) => (
                     <button
@@ -939,13 +960,10 @@ const HomePage = () => {
               </h3>
 
               {[
-                { icon: <Phone className="w-6 h-6" />, label: "Call Us Anytime", value: "+91 9000229040, +91 8260229039", desc: "Available Mon-Sat", color: "blue" },
+                { icon: <Phone className="w-6 h-6" />, label: "Call Us Anytime", value: "+91 9000229040", desc: "Available Mon-Sat", color: "blue" },
                 { icon: <Mail className="w-6 h-6" />, label: "Email Support", value: "activerehab.in@gmail.com", desc: "Quick response time", color: "orange" },
-                { icon: <Globe className="w-6 h-6" />, label: "Website", value: "activerehab.in", desc: "Visit our official site", color: "blue" },
-                { icon: <MapPin className="w-6 h-6" />, label: "Kondapur Branch", value: "Plot No. 1272, 80 Feet Road", desc: "above Burfi Ghar, Rajarajeshwara Colony", color: "blue" },
-                { icon: <MapPin className="w-6 h-6" />, label: "Kompally Branch", value: "Petbasheerabad, Quthbullapur", desc: "opp. Decathlon, Kompally", color: "orange" },
-                { icon: <MapPin className="w-6 h-6" />, label: "Cuttack Branch", value: "Vishwas Rehab Centre", desc: "Plot-C-1348/28, CDA Sector VI, Odisha", color: "blue" },
-                { icon: <MapPin className="w-6 h-6" />, label: "Bhubaneswar Branch", value: "1st Floor, Pramila Tower", desc: "behind Pantaloons, Sishu Vihar, Patia, Odisha", color: "orange" }
+                { icon: <MapPin className="w-6 h-6" />, label: "Kondapur Branch", value: "Plot No. 1272, 80 Feet Road", desc: "above Burfi Ghar, Rajarajeshwara Colony, Kondapur", color: "blue" },
+                { icon: <MapPin className="w-6 h-6" />, label: "Kompally Branch", value: "Petbasheerabad, Quthbullapur", desc: "opp. Decathlon, Kompally, Hyderabad", color: "orange" }
               ].map((item, i) => (
                 <motion.div
                   key={i}
@@ -975,33 +993,6 @@ const HomePage = () => {
                       ) : item.label === 'Kompally Branch' ? (
                         <a
                           href="https://maps.google.com/?q=Petbasheerabad, Quthbullapur, opp. Decathlon, Kompally, Hyderabad, Telangana 500055"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:text-brandBlue"
-                        >
-                          {item.value}
-                        </a>
-                      ) : item.label === 'Cuttack Branch' ? (
-                        <a
-                          href="https://maps.google.com/?q=Vishwas Rehab Centre, Plot-C-1348/28, CDA Sector VI, Cuttack, Odisha 753014"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:text-brandBlue"
-                        >
-                          {item.value}
-                        </a>
-                      ) : item.label === 'Bhubaneswar Branch' ? (
-                        <a
-                          href="https://maps.google.com/?q=1st Floor, Pramila Tower, behind Pantaloons, Sishu Vihar, Patia, Bhubaneswar, Odisha 751024"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:text-brandBlue"
-                        >
-                          {item.value}
-                        </a>
-                      ) : item.label === 'Website' ? (
-                        <a
-                          href="https://activerehab.in/"
                           target="_blank"
                           rel="noreferrer"
                           className="hover:text-brandBlue"
@@ -1182,7 +1173,7 @@ const HomePage = () => {
                   </div>
                   <div>
                     <p className="text-slate-400 text-sm">Our Locations</p>
-                    <p className="text-white font-medium">Kondapur, Kompally, Cuttack, Bhubaneswar</p>
+                    <p className="text-white font-medium">Kondapur & Kompally, Hyderabad</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
@@ -1201,7 +1192,7 @@ const HomePage = () => {
           <div className="border-t border-slate-800 pt-12 mt-12">
             <div className="flex flex-col md:flex-row justify-between items-center gap-6">
               <div className="text-slate-500 text-sm">
-                <p>&copy; 2026 Activerehab Chiropractic & Physiotherapy Centre. All rights reserved.</p>
+                <p>&copy; 2026 Activerehab Chiropractic & Centre. All rights reserved.</p>
                 <p className="mt-1">Powered by <span className="text-slate-300">Crow Medico</span></p>
               </div>
               <div className="flex flex-wrap justify-center gap-8">
