@@ -1,6 +1,241 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
-import { Phone, Mail, Clock, Award, Users, Heart, ChevronRight, Star, CheckCircle, ArrowRight, Quote, Facebook, Instagram, Linkedin, ArrowUp, Zap, MapPin, Menu, X, Brain, Stethoscope, ShieldCheck, History, Activity, LifeBuoy, ChevronDown } from 'lucide-react';
+import { Phone, Mail, Clock, Award, Users, Heart, ChevronRight, Star, CheckCircle, ArrowRight, Quote, Facebook, Instagram, Linkedin, ArrowUp, Zap, MapPin, Menu, X, Brain, Stethoscope, ShieldCheck, History, Activity, LifeBuoy, ChevronDown, Globe } from 'lucide-react';
+
+// Internal sub-component for premium interactive cards
+const InteractiveCard = ({ condition, index }) => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+
+  // Spotlight effect tracking
+  const glowX = useTransform(mouseX, [-0.5, 0.5], [0, 100]);
+  const glowY = useTransform(mouseY, [-0.5, 0.5], [0, 100]);
+
+  function onMouseMove(event) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x);
+    mouseY.set(y);
+  }
+
+  function onMouseLeave() {
+    mouseX.set(0);
+    mouseY.set(0);
+  }
+
+  return (
+    <motion.div
+      className="group relative h-full perspective-1000"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.8 }}
+    >
+      <motion.div
+        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        className="relative h-full bg-white/10 backdrop-blur-xl rounded-[2.5rem] border border-white/20 shadow-2xl overflow-hidden transition-all duration-300"
+      >
+        {/* Dynamic Spotlight Glow */}
+        <motion.div
+          className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          style={{
+            background: `radial-gradient(600px circle at var(--x) var(--y), rgba(46,67,134,0.15), transparent 40%)`,
+            "--x": useTransform(glowX, (v) => `${v}%`),
+            "--y": useTransform(glowY, (v) => `${v}%`),
+          }}
+        />
+
+        {/* Background Image with Parallax */}
+        <div className="h-52 overflow-hidden relative">
+          <motion.img
+            src={condition.image}
+            alt={condition.title}
+            style={{
+              scale: 1.1,
+              x: useTransform(mouseX, [-0.5, 0.5], [10, -10]),
+              y: useTransform(mouseY, [-0.5, 0.5], [10, -10]),
+            }}
+            className="w-full h-full object-cover transition-transform duration-1000 ease-out"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
+
+          {/* Floating Icon with 3D Pop */}
+          <div className="absolute -bottom-5 right-6" style={{ transform: "translateZ(60px)" }}>
+            <motion.div
+              className="bg-white p-4 rounded-2xl shadow-xl text-brandBlue border border-slate-50"
+              whileHover={{ y: -8, rotate: 15, scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              {condition.icon}
+            </motion.div>
+          </div>
+
+          <div className="absolute bottom-5 left-6" style={{ transform: "translateZ(30px)" }}>
+            <h3 className="text-xl font-black text-white tracking-tight">{condition.title}</h3>
+          </div>
+        </div>
+
+        {/* Content with Staggered Elements */}
+        <div className="p-7 flex flex-col h-full" style={{ transform: "translateZ(20px)" }}>
+          <motion.p
+            className="text-slate-500 text-[13px] mb-6 font-bold italic leading-relaxed line-clamp-2"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            {condition.description}
+          </motion.p>
+
+          <div className="space-y-3 mb-6 flex-grow">
+            {condition.conditions.map((item, i) => (
+              <motion.div
+                key={i}
+                className="flex items-center text-[13px] text-slate-700 font-black group/item"
+                initial={{ opacity: 0, x: -15 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 + (i * 0.1) }}
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-brandOrange mr-3 group-hover/item:scale-125 transition-transform shadow-lg shadow-brandOrange/20"></div>
+                {item}
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            className="mt-auto pt-6 border-t border-slate-100/50 flex items-center justify-between group/btn cursor-pointer"
+            whileHover={{ x: 8 }}
+            transition={{ type: "spring", stiffness: 400 }}
+          >
+            <span className="text-[12px] font-black text-brandBlue uppercase tracking-[0.2em] flex items-center">
+              Full Coverage
+              <motion.div
+                className="ml-2"
+                animate={{ x: [0, 5, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+              >
+                <ArrowRight className="w-5 h-5 text-brandOrange" />
+              </motion.div>
+            </span>
+          </motion.div>
+        </div>
+
+        {/* Holographic Reflection Layer */}
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/5 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const ServiceCard = ({ service, index }) => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
+
+  const glowX = useTransform(mouseX, [-0.5, 0.5], [0, 100]);
+  const glowY = useTransform(mouseY, [-0.5, 0.5], [0, 100]);
+
+  function onMouseMove(event) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x);
+    mouseY.set(y);
+  }
+
+  function onMouseLeave() {
+    mouseX.set(0);
+    mouseY.set(0);
+  }
+
+  return (
+    <motion.div
+      key={index}
+      className="relative group h-full perspective-1000"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.2, duration: 0.8 }}
+    >
+      <motion.div
+        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        className="relative h-full bg-white/70 backdrop-blur-xl border border-slate-100 rounded-[3rem] overflow-hidden shadow-2xl hover:shadow-brandBlue/10 transition-all duration-700 flex flex-col"
+      >
+        {/* Dynamic Spotlight Glow */}
+        <motion.div
+          className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          style={{
+            background: `radial-gradient(600px circle at var(--x) var(--y), rgba(46,67,134,0.1), transparent 40%)`,
+            "--x": useTransform(glowX, (v) => `${v}%`),
+            "--y": useTransform(glowY, (v) => `${v}%`),
+          }}
+        />
+
+        {/* Image Header */}
+        <div className="h-64 overflow-hidden relative">
+          <motion.img
+            src={service.image}
+            alt={service.title}
+            style={{
+              scale: 1.1,
+              x: useTransform(mouseX, [-0.5, 0.5], [15, -15]),
+              y: useTransform(mouseY, [-0.5, 0.5], [15, -15]),
+            }}
+            className="w-full h-full object-cover transition-transform duration-1000 ease-out"
+          />
+          <div className={`absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent`}></div>
+
+          {/* Floating Number Backdrop */}
+          <div className="absolute -top-4 -left-4 text-9xl font-black text-white/10 select-none group-hover:text-brandOrange/20 transition-colors duration-500 pointer-events-none">
+            0{index + 1}
+          </div>
+
+          {/* Icon Container with 3D Pop */}
+          <div className="absolute -bottom-6 left-10" style={{ transform: "translateZ(80px)" }}>
+            <motion.div
+              className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-2xl flex items-center justify-center text-white shadow-2xl border-4 border-white`}
+              whileHover={{ y: -8, rotate: 12, scale: 1.1 }}
+            >
+              {service.icon}
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="p-10 pt-12 flex flex-col flex-grow" style={{ transform: "translateZ(30px)" }}>
+          <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight group-hover:text-brandBlue transition-colors">{service.title}</h3>
+          <h4 className="text-brandOrange font-black uppercase text-xs tracking-widest mb-6">{service.subtitle}</h4>
+
+          <p className="text-slate-600 leading-relaxed mb-10 font-medium text-sm flex-grow">
+            {service.description}
+          </p>
+
+          <motion.button
+            className={`mt-auto w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-white bg-gradient-to-r ${service.color} shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2`}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <span>Discover More</span>
+            <ArrowRight className="w-4 h-4" />
+          </motion.button>
+        </div>
+
+        {/* Bottom Accent Glow */}
+        <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-4 bg-gradient-to-r ${service.color} blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500`}></div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 const HomePage = () => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -16,23 +251,28 @@ const HomePage = () => {
   }, []);
 
   const testimonials = [
-    // ... rest of testimonials
     {
-      name: "Mohammed Pasha",
-      time: "2 years ago",
-      content: "I highly recommend Southern spine, Dr Jadhav is a genius, I was suffering from lower back for almost 3 years, it took 5 sessions to get rid of it, the treatment is pocket friendly, if you are suffering from pain then don't hesitate just visit him.",
+      name: "Neha Yadav",
+      time: "Recent Patient",
+      content: "He is the best Chiropractor I have been to. My neck pain, backache, my mother's Frozen shoulder, my son's Plantar fasciitis has all been treated by Dr. Ashok. He listens to your issues very patiently, gives enough time to each patient.",
       rating: 5
     },
     {
-      name: "Sree Durga Bhavani",
-      time: "2 years ago",
-      content: "Dr. Raghupathi Jadhav is truly exceptional. His interactive sessions are a game-changer, creating an environment that not only promotes healing but also uplifts the patient's spirits.",
+      name: "Sameendra Rachuri",
+      time: "Recent Patient",
+      content: "I was suffering from lower back pain and consulted Dr. Ashok Kota regarding this. After a thorough discussion about my condition and a checkup, he suggested two to three chiropractic sessions to relieve my muscle tension and some lower body and neck exercises to further reduce the pain and prevent future occurrences.",
       rating: 5
     },
     {
-      name: "Nawaz Mohammad",
-      time: "2 years ago",
-      content: "Hi all, I was having hell of back pain and I got relief from it now in just 6 sessions Dr Jadhav sir is very good and expert in this I recommend to all to contact him.",
+      name: "Kolli Srilaxmi",
+      time: "Recent Patient",
+      content: "I had a knee pain and lower back pain. I found Dr.Ashok in Google and went for treatment. Explained all my issues, he listened carefully and explained about the sessions/treatment. My pain had cured in 4 sessions. I will recommend my friends as well. Thank you Mr.Ashok.",
+      rating: 5
+    },
+    {
+      name: "Sachin Gupta",
+      time: "Recent Patient",
+      content: "Dr Ashok under promise and over deliver. For me he said I might improve but I see major improvement after 3 sessions. His empathetic nature, precision of how much adjustment is required and confidence in his skills sets him apart!",
       rating: 5
     }
   ];
@@ -49,7 +289,7 @@ const HomePage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 2000);
+    }, 4000); // Slower interval for longer text
     return () => clearInterval(interval);
   }, [testimonials.length]);
 
@@ -106,160 +346,31 @@ const HomePage = () => {
 
   const services = [
     {
-      title: "Predict",
-      subtitle: "Dive Deep Into Your Story",
-      description: "Tackle a comprehensive exploration of your well-being at Southern Spine. Uncover the intricacies of your health, anticipate potential challenges, and reveal hidden strengths.",
+      title: "Chiropractic Adjustments",
+      subtitle: "Personalized Care",
+      description: "Experience personalized chiropractic care with Dr. Ashok P. Kota at Activerehab. Our tailored treatments in Kondapur and Kompally ensure your spine aligns with your health goals. Rediscover mobility and comfort today!",
       icon: <Brain className="w-8 h-8" />,
       image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?q=80&w=2070&auto=format&fit=crop",
       color: "from-brandBlue to-brandBlue/80"
     },
     {
-      title: "Prevent",
-      subtitle: "Empowering You for a Lifetime of Well-Being",
-      description: "Take a proactive approach to your well-being with our specialized care. Address the core of your condition through personalized exercises and injury-prevention strategies.",
+      title: "Physiotherapy Sessions",
+      subtitle: "Improved Movement",
+      description: "Step into a world of improved movement at Activerehab. Under Dr. Ashok P. Kota’s expert guidance in Hyderabad, our physiotherapy sessions are designed to strengthen and heal. Begin your journey to full recovery now!",
       icon: <ShieldCheck className="w-8 h-8" />,
       image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop",
       color: "from-brandOrange to-brandOrange/80"
     },
     {
-      title: "Perform",
-      subtitle: "Ignite Your Full Potential",
-      description: "Experience tailored rehabilitation, collaborative goal-setting, and expert guidance. Navigate sport-specific training to unleash your complete potential.",
+      title: "Posture Correction",
+      subtitle: "Precise Corrections",
+      description: "Perfect your posture with precise corrections at Activerehab. Dr. Ashok P. Kota’s specialized approach in Kondapur and Kompally helps align your body and enhance wellbeing. Transform your posture and enhance your lifestyle!",
       icon: <Activity className="w-8 h-8" />,
       image: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?q=80&w=1974&auto=format&fit=crop",
       color: "from-brandBlue to-brandOrange"
     }
   ];
 
-  // Internal sub-component for premium interactive cards
-  const InteractiveCard = ({ condition, index }) => {
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-
-    const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
-    const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
-
-    // Spotlight effect tracking
-    const glowX = useTransform(mouseX, [-0.5, 0.5], [0, 100]);
-    const glowY = useTransform(mouseY, [-0.5, 0.5], [0, 100]);
-
-    function onMouseMove(event) {
-      const rect = event.currentTarget.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width - 0.5;
-      const y = (event.clientY - rect.top) / rect.height - 0.5;
-      mouseX.set(x);
-      mouseY.set(y);
-    }
-
-    function onMouseLeave() {
-      mouseX.set(0);
-      mouseY.set(0);
-    }
-
-    return (
-      <motion.div
-        className="group relative h-full perspective-1000"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: index * 0.1, duration: 0.8 }}
-      >
-        <motion.div
-          style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-          onMouseMove={onMouseMove}
-          onMouseLeave={onMouseLeave}
-          className="relative h-full bg-white/10 backdrop-blur-xl rounded-[2.5rem] border border-white/20 shadow-2xl overflow-hidden transition-all duration-300"
-        >
-          {/* Dynamic Spotlight Glow */}
-          <motion.div
-            className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-            style={{
-              background: `radial-gradient(600px circle at var(--x) var(--y), rgba(46,67,134,0.15), transparent 40%)`,
-              "--x": useTransform(glowX, (v) => `${v}%`),
-              "--y": useTransform(glowY, (v) => `${v}%`),
-            }}
-          />
-
-          {/* Background Image with Parallax */}
-          <div className="h-52 overflow-hidden relative">
-            <motion.img
-              src={condition.image}
-              alt={condition.title}
-              style={{
-                scale: 1.1,
-                x: useTransform(mouseX, [-0.5, 0.5], [10, -10]),
-                y: useTransform(mouseY, [-0.5, 0.5], [10, -10]),
-              }}
-              className="w-full h-full object-cover transition-transform duration-1000 ease-out"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
-
-            {/* Floating Icon with 3D Pop */}
-            <div className="absolute -bottom-5 right-6" style={{ transform: "translateZ(60px)" }}>
-              <motion.div
-                className="bg-white p-4 rounded-2xl shadow-xl text-brandBlue border border-slate-50"
-                whileHover={{ y: -8, rotate: 15, scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                {condition.icon}
-              </motion.div>
-            </div>
-
-            <div className="absolute bottom-5 left-6" style={{ transform: "translateZ(30px)" }}>
-              <h3 className="text-xl font-black text-white tracking-tight">{condition.title}</h3>
-            </div>
-          </div>
-
-          {/* Content with Staggered Elements */}
-          <div className="p-7 flex flex-col h-full" style={{ transform: "translateZ(20px)" }}>
-            <motion.p
-              className="text-slate-500 text-[13px] mb-6 font-bold italic leading-relaxed line-clamp-2"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              {condition.description}
-            </motion.p>
-
-            <div className="space-y-3 mb-6 flex-grow">
-              {condition.conditions.map((item, i) => (
-                <motion.div
-                  key={i}
-                  className="flex items-center text-[13px] text-slate-700 font-black group/item"
-                  initial={{ opacity: 0, x: -15 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 + (i * 0.1) }}
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-brandOrange mr-3 group-hover/item:scale-125 transition-transform shadow-lg shadow-brandOrange/20"></div>
-                  {item}
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div
-              className="mt-auto pt-6 border-t border-slate-100/50 flex items-center justify-between group/btn cursor-pointer"
-              whileHover={{ x: 8 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              <span className="text-[12px] font-black text-brandBlue uppercase tracking-[0.2em] flex items-center">
-                Full Coverage
-                <motion.div
-                  className="ml-2"
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                >
-                  <ArrowRight className="w-5 h-5 text-brandOrange" />
-                </motion.div>
-              </span>
-            </motion.div>
-          </div>
-
-          {/* Holographic Reflection Layer */}
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/5 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-        </motion.div>
-      </motion.div>
-    );
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white overflow-x-hidden">
@@ -282,8 +393,8 @@ const HomePage = () => {
                 <Heart className="w-6 h-6 text-brandOrange" />
               </div>
               <div className="text-xl font-bold tracking-tight">
-                <span className="text-brandBlue uppercase">Southern</span>{" "}
-                <span className="text-brandOrange uppercase">Spine</span>
+                <span className="text-brandBlue uppercase">Activerehab</span>{" "}
+                <span className="text-brandOrange uppercase">Centre</span>
               </div>
             </motion.div>
 
@@ -309,7 +420,7 @@ const HomePage = () => {
                 whileTap={{ scale: 0.95 }}
               >
                 <Phone className="w-4 h-4" />
-                <span>+91 9700575616</span>
+                <span>+91 9000229040</span>
               </motion.button>
 
               {/* Mobile Menu Toggle */}
@@ -352,7 +463,7 @@ const HomePage = () => {
               transition={{ delay: 0.5 }}
             >
               <Phone className="w-5 h-5" />
-              <span>+91 9700575616</span>
+              <span>+91 9000229040</span>
             </motion.button>
           </div>
         </motion.div>
@@ -391,9 +502,9 @@ const HomePage = () => {
               >
                 Visit Our{" "}
                 <span className="text-brandOrange underline decoration-white/20 underline-offset-8 drop-shadow-md">
-                  Spine & Joint
+                  Best Physiotherapist Chiropractic
                 </span>{" "}
-                Clinic
+                Center
               </motion.h1>
 
               <motion.p
@@ -402,7 +513,7 @@ const HomePage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                Helping you achieve your goals pain-free and enabling you to live an active lifestyle with expert care from Dr. Raghupathi Jadhav.
+                At Activerehab, we offer personalized treatment plans that focus on your unique health goals. As the best physiotherapist chiropractic center in Hyderabad, our team of experienced professionals is dedicated to helping you achieve optimal wellness.
               </motion.p>
 
               <motion.div
@@ -411,24 +522,26 @@ const HomePage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
               >
-                <motion.button
+                <motion.a
+                  href="tel:+919000229040"
                   className="bg-brandBlue text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-3 w-full sm:w-auto"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Phone className="w-5 h-5" />
-                  <span>Call Now</span>
+                  <span>Consult Now</span>
                   <ChevronRight className="w-5 h-5 text-brandOrange" />
-                </motion.button>
+                </motion.a>
 
-                <motion.button
+                <motion.a
+                  href="#contact"
                   className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-brandBlue transition-all duration-300 flex items-center justify-center space-x-3 w-full sm:w-auto"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Clock className="w-5 h-5" />
-                  <span>Book Appointment</span>
-                </motion.button>
+                  <span>Make an Appointment</span>
+                </motion.a>
               </motion.div>
 
               <motion.div
@@ -439,11 +552,15 @@ const HomePage = () => {
               >
                 <div className="flex items-center space-x-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-lg">
                   <Users className="w-5 h-5 text-white" />
-                  <span className="text-white font-bold">5000+ Happy Patients</span>
+                  <span className="text-white font-bold">5,000+ Satisfied Patients</span>
                 </div>
                 <div className="flex items-center space-x-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-brandOrange/30 shadow-lg">
                   <Award className="w-5 h-5 text-brandOrange" />
-                  <span className="text-white font-bold">11+ Years Experience</span>
+                  <span className="text-white font-bold">15+ Years Experience</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-lg">
+                  <MapPin className="w-5 h-5 text-white" />
+                  <span className="text-white font-bold">4 Branch Clinics</span>
                 </div>
               </motion.div>
             </motion.div>
@@ -503,13 +620,13 @@ const HomePage = () => {
                 <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(46,67,134,0.25)] border-[12px] border-white">
                   <img
                     src="/images/doctor.jpg"
-                    alt="Dr. Raghupathi Jadhav"
+                    alt="Dr. Ashok P. Kota"
                     className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000"
                   />
                   {/* Floating Identity Label */}
                   <div className="absolute bottom-6 left-6 right-6 bg-brandBlue/90 backdrop-blur-md p-6 rounded-2xl text-white border border-white/20 shadow-2xl">
-                    <h3 className="text-xl font-black uppercase tracking-tighter">Dr. Raghupathi Jadhav</h3>
-                    <p className="text-brandOrange font-bold text-sm tracking-[0.2em] uppercase">Spine Adjustment Specialist</p>
+                    <h3 className="text-xl font-black uppercase tracking-tighter">Dr. Ashok P. Kota</h3>
+                    <p className="text-brandOrange font-bold text-sm tracking-[0.2em] uppercase">Master of Chiropractic</p>
                   </div>
                 </div>
               </div>
@@ -528,7 +645,7 @@ const HomePage = () => {
                   </div>
                   <div className="text-[10px] uppercase font-black tracking-widest text-slate-400">Awarded</div>
                   <div className="text-xl font-black text-brandBlue">Best Doctor</div>
-                  <div className="text-xs font-bold text-brandOrange">2018 Honor</div>
+                  <div className="text-xs font-bold text-brandOrange">Excellence Award</div>
                 </div>
               </motion.div>
             </motion.div>
@@ -550,18 +667,38 @@ const HomePage = () => {
               </div>
 
               <p className="text-xl text-slate-600 leading-relaxed font-medium">
-                With over a decade of hands-on expertise, Dr. Raghupathi Jadhav is a renowned leader in neuro-musculoskeletal recovery, merging international standards with personalized care.
+                Activerehab Chiropractic and Physiotherapy Centre is more than just a clinic—it’s your premier destination in Kondapur and Kompally, Hyderabad, where your health and comfort are our top priorities. As the best physiotherapist chiropractic center in Hyderabad, our expert team, led by Dr. Ashok P. Kota, is committed to providing personalized treatment plans tailored to your individual health needs.
               </p>
+
+              {/* Mission & Vision Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                <div className="bg-brandBlue/5 p-6 rounded-3xl border border-brandBlue/10">
+                  <h3 className="text-brandBlue font-black uppercase tracking-widest text-sm mb-3 flex items-center">
+                    <Zap className="w-5 h-5 mr-2" /> Our Mission
+                  </h3>
+                  <p className="text-slate-600 text-sm font-medium leading-relaxed">
+                    To Enhance Lives Through Passionate, Comprehensive Care
+                  </p>
+                </div>
+                <div className="bg-brandOrange/5 p-6 rounded-3xl border border-brandOrange/10">
+                  <h3 className="text-brandOrange font-black uppercase tracking-widest text-sm mb-3 flex items-center">
+                    <Activity className="w-5 h-5 mr-2" /> Our Vision
+                  </h3>
+                  <p className="text-slate-600 text-sm font-medium leading-relaxed">
+                    To Be a Leading Provider of Innovative and Patient-Centered Chiropractic and Physiotherapy
+                  </p>
+                </div>
+              </div>
 
               {/* Premium Qualification Tags */}
               <div className="space-y-6">
-                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Global Qualifications</h3>
+                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Qualifications & Mission</h3>
                 <div className="flex flex-wrap gap-3">
                   {[
-                    { text: "Master of Chiropractic", location: "Sweden", color: "blue" },
-                    { text: "D.O Osteopathy", location: "Canada", color: "orange" },
-                    { text: "FDM Model", location: "Germany", color: "blue" },
-                    { text: "Physiotherapy", location: "India", color: "orange" }
+                    { text: "Master of Chiropractic", location: "Certified", color: "blue" },
+                    { text: "Physiotherapy", location: "Expert", color: "orange" },
+                    { text: "Holistic Care", location: "Patient-Centered", color: "blue" },
+                    { text: "Pain Relief", location: "Specialist", color: "orange" }
                   ].map((q, i) => (
                     <motion.div
                       key={i}
@@ -583,9 +720,9 @@ const HomePage = () => {
               {/* Animated Stats Bar */}
               <div className="grid grid-cols-3 gap-8 pt-8 border-t border-slate-100">
                 {[
-                  { label: "Years Exp", value: "11+", color: "text-brandBlue" },
-                  { label: "Patients", value: "5000+", color: "text-brandOrange" },
-                  { label: "Success Rate", value: "99%", color: "text-brandBlue" }
+                  { label: "Years Exp", value: "15+", color: "text-brandBlue" },
+                  { label: "Patients", value: "5,000+", color: "text-brandOrange" },
+                  { label: "Branch Clinics", value: "4", color: "text-brandBlue" }
                 ].map((stat, i) => (
                   <div key={i} className="text-center lg:text-left group">
                     <div className={`text-4xl font-black ${stat.color} mb-1 transition-transform group-hover:scale-110`}>{stat.value}</div>
@@ -617,6 +754,7 @@ const HomePage = () => {
               className="text-brandOrange font-bold tracking-[0.3em] uppercase text-xs mb-6 block"
               initial={{ opacity: 0, tracking: "0.1em" }}
               whileInView={{ opacity: 1, tracking: "0.3em" }}
+              viewport={{ once: true }}
               transition={{ duration: 1 }}
             >
               Specialized Care
@@ -672,108 +810,9 @@ const HomePage = () => {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
-            {services.map((service, index) => {
-              const mouseX = useMotionValue(0);
-              const mouseY = useMotionValue(0);
-
-              const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 20 });
-              const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 20 });
-
-              const glowX = useTransform(mouseX, [-0.5, 0.5], [0, 100]);
-              const glowY = useTransform(mouseY, [-0.5, 0.5], [0, 100]);
-
-              function onMouseMove(event) {
-                const rect = event.currentTarget.getBoundingClientRect();
-                const x = (event.clientX - rect.left) / rect.width - 0.5;
-                const y = (event.clientY - rect.top) / rect.height - 0.5;
-                mouseX.set(x);
-                mouseY.set(y);
-              }
-
-              function onMouseLeave() {
-                mouseX.set(0);
-                mouseY.set(0);
-              }
-
-              return (
-                <motion.div
-                  key={index}
-                  className="relative group h-full perspective-1000"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2, duration: 0.8 }}
-                >
-                  <motion.div
-                    style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-                    onMouseMove={onMouseMove}
-                    onMouseLeave={onMouseLeave}
-                    className="relative h-full bg-white/70 backdrop-blur-xl border border-slate-100 rounded-[3rem] overflow-hidden shadow-2xl hover:shadow-brandBlue/10 transition-all duration-700 flex flex-col"
-                  >
-                    {/* Dynamic Spotlight Glow */}
-                    <motion.div
-                      className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      style={{
-                        background: `radial-gradient(600px circle at var(--x) var(--y), rgba(46,67,134,0.1), transparent 40%)`,
-                        "--x": useTransform(glowX, (v) => `${v}%`),
-                        "--y": useTransform(glowY, (v) => `${v}%`),
-                      }}
-                    />
-
-                    {/* Image Header */}
-                    <div className="h-64 overflow-hidden relative">
-                      <motion.img
-                        src={service.image}
-                        alt={service.title}
-                        style={{
-                          scale: 1.1,
-                          x: useTransform(mouseX, [-0.5, 0.5], [15, -15]),
-                          y: useTransform(mouseY, [-0.5, 0.5], [15, -15]),
-                        }}
-                        className="w-full h-full object-cover transition-transform duration-1000 ease-out"
-                      />
-                      <div className={`absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent`}></div>
-
-                      {/* Floating Number Backdrop */}
-                      <div className="absolute -top-4 -left-4 text-9xl font-black text-white/10 select-none group-hover:text-brandOrange/20 transition-colors duration-500 pointer-events-none">
-                        0{index + 1}
-                      </div>
-
-                      {/* Icon Container with 3D Pop */}
-                      <div className="absolute -bottom-6 left-10" style={{ transform: "translateZ(80px)" }}>
-                        <motion.div
-                          className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-2xl flex items-center justify-center text-white shadow-2xl border-4 border-white`}
-                          whileHover={{ y: -8, rotate: 12, scale: 1.1 }}
-                        >
-                          {service.icon}
-                        </motion.div>
-                      </div>
-                    </div>
-
-                    <div className="p-10 pt-12 flex flex-col flex-grow" style={{ transform: "translateZ(30px)" }}>
-                      <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight group-hover:text-brandBlue transition-colors">{service.title}</h3>
-                      <h4 className="text-brandOrange font-black uppercase text-xs tracking-widest mb-6">{service.subtitle}</h4>
-
-                      <p className="text-slate-600 leading-relaxed mb-10 font-medium text-sm flex-grow">
-                        {service.description}
-                      </p>
-
-                      <motion.button
-                        className={`mt-auto w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-white bg-gradient-to-r ${service.color} shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2`}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <span>Discover More</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </motion.button>
-                    </div>
-
-                    {/* Bottom Accent Glow */}
-                    <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-4 bg-gradient-to-r ${service.color} blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500`}></div>
-                  </motion.div>
-                </motion.div>
-              );
-            })}
+            {services.map((service, index) => (
+              <ServiceCard key={index} service={service} index={index} />
+            ))}
           </div>
         </div>
       </section>
@@ -900,9 +939,13 @@ const HomePage = () => {
               </h3>
 
               {[
-                { icon: <Phone className="w-6 h-6" />, label: "Call Us Anytime", value: "+91 9700575616", desc: "Available Mon-Sat", color: "blue" },
-                { icon: <Mail className="w-6 h-6" />, label: "Email Support", value: "info@southernspine.in", desc: "Quick response time", color: "orange" },
-                { icon: <MapPin className="w-6 h-6" />, label: "Visit Clinic", value: "Southern Spine Clinic", desc: "Hyderabad, India", color: "blue" }
+                { icon: <Phone className="w-6 h-6" />, label: "Call Us Anytime", value: "+91 9000229040, +91 8260229039", desc: "Available Mon-Sat", color: "blue" },
+                { icon: <Mail className="w-6 h-6" />, label: "Email Support", value: "activerehab.in@gmail.com", desc: "Quick response time", color: "orange" },
+                { icon: <Globe className="w-6 h-6" />, label: "Website", value: "activerehab.in", desc: "Visit our official site", color: "blue" },
+                { icon: <MapPin className="w-6 h-6" />, label: "Kondapur Branch", value: "Plot No. 1272, 80 Feet Road", desc: "above Burfi Ghar, Rajarajeshwara Colony", color: "blue" },
+                { icon: <MapPin className="w-6 h-6" />, label: "Kompally Branch", value: "Petbasheerabad, Quthbullapur", desc: "opp. Decathlon, Kompally", color: "orange" },
+                { icon: <MapPin className="w-6 h-6" />, label: "Cuttack Branch", value: "Vishwas Rehab Centre", desc: "Plot-C-1348/28, CDA Sector VI, Odisha", color: "blue" },
+                { icon: <MapPin className="w-6 h-6" />, label: "Bhubaneswar Branch", value: "1st Floor, Pramila Tower", desc: "behind Pantaloons, Sishu Vihar, Patia, Odisha", color: "orange" }
               ].map((item, i) => (
                 <motion.div
                   key={i}
@@ -915,7 +958,60 @@ const HomePage = () => {
                   </div>
                   <div>
                     <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{item.label}</div>
-                    <div className="text-lg font-black text-slate-900 leading-none mb-1">{item.value}</div>
+                    <div className="text-lg font-black text-slate-900 leading-none mb-1">
+                      {item.label === 'Call Us Anytime' ? (
+                        <a href="tel:+919000229040" className="hover:text-brandBlue">{item.value}</a>
+                      ) : item.label === 'Email Support' ? (
+                        <a href="mailto:activerehab.in@gmail.com" className="hover:text-brandBlue">{item.value}</a>
+                      ) : item.label === 'Kondapur Branch' ? (
+                        <a
+                          href="https://maps.google.com/?q=Plot No. 1272, 80 Feet Road, above Burfi Ghar, Rajarajeshwara Colony, Kondapur, Telangana 500084"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:text-brandBlue"
+                        >
+                          {item.value}
+                        </a>
+                      ) : item.label === 'Kompally Branch' ? (
+                        <a
+                          href="https://maps.google.com/?q=Petbasheerabad, Quthbullapur, opp. Decathlon, Kompally, Hyderabad, Telangana 500055"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:text-brandBlue"
+                        >
+                          {item.value}
+                        </a>
+                      ) : item.label === 'Cuttack Branch' ? (
+                        <a
+                          href="https://maps.google.com/?q=Vishwas Rehab Centre, Plot-C-1348/28, CDA Sector VI, Cuttack, Odisha 753014"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:text-brandBlue"
+                        >
+                          {item.value}
+                        </a>
+                      ) : item.label === 'Bhubaneswar Branch' ? (
+                        <a
+                          href="https://maps.google.com/?q=1st Floor, Pramila Tower, behind Pantaloons, Sishu Vihar, Patia, Bhubaneswar, Odisha 751024"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:text-brandBlue"
+                        >
+                          {item.value}
+                        </a>
+                      ) : item.label === 'Website' ? (
+                        <a
+                          href="https://activerehab.in/"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:text-brandBlue"
+                        >
+                          {item.value}
+                        </a>
+                      ) : (
+                        item.value
+                      )}
+                    </div>
                     <div className="text-xs font-bold text-slate-500">{item.desc}</div>
                   </div>
                 </motion.div>
@@ -930,7 +1026,7 @@ const HomePage = () => {
                   </div>
                   <div>
                     <h4 className="text-lg font-black tracking-tight">Clinic Timing</h4>
-                    <p className="text-blue-100 font-bold">Mon - Sat: 9:00 AM - 7:00 PM</p>
+                    <p className="text-blue-100 font-bold">Mon - Sat: 9:00 AM - 9:00 PM</p>
                   </div>
                 </div>
               </div>
@@ -1012,8 +1108,8 @@ const HomePage = () => {
                   <Heart className="w-7 h-7 text-brandBlue" />
                 </div>
                 <div className="text-2xl font-bold tracking-tight">
-                  <span className="text-white">SOUTHERN</span>{" "}
-                  <span className="text-brandOrange">SPINE</span>
+                  <span className="text-white">ACTIVEREHAB</span>{" "}
+                  <span className="text-brandOrange">CENTRE</span>
                 </div>
               </div>
               <p className="text-slate-400 leading-relaxed max-w-sm mx-auto md:mx-0">
@@ -1085,8 +1181,8 @@ const HomePage = () => {
                     <MapPin className="w-5 h-5 text-brandOrange" />
                   </div>
                   <div>
-                    <p className="text-slate-400 text-sm">Our Location</p>
-                    <p className="text-white font-medium">Southern Spine Clinic, Hyderabad</p>
+                    <p className="text-slate-400 text-sm">Our Locations</p>
+                    <p className="text-white font-medium">Kondapur, Kompally, Cuttack, Bhubaneswar</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
@@ -1095,7 +1191,7 @@ const HomePage = () => {
                   </div>
                   <div>
                     <p className="text-slate-400 text-sm">Emergency Call</p>
-                    <p className="text-white font-medium">+91 9700575616</p>
+                    <p className="text-white font-medium">+91 9000229040</p>
                   </div>
                 </div>
               </div>
@@ -1105,7 +1201,7 @@ const HomePage = () => {
           <div className="border-t border-slate-800 pt-12 mt-12">
             <div className="flex flex-col md:flex-row justify-between items-center gap-6">
               <div className="text-slate-500 text-sm">
-                <p>&copy; 2026 Southern Spine Clinic. All rights reserved.</p>
+                <p>&copy; 2026 Activerehab Chiropractic & Physiotherapy Centre. All rights reserved.</p>
                 <p className="mt-1">Powered by <span className="text-slate-300">Crow Medico</span></p>
               </div>
               <div className="flex flex-wrap justify-center gap-8">
