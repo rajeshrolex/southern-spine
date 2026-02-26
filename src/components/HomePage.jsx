@@ -351,7 +351,7 @@ const HomePage = () => {
       description: "Experience personalized chiropractic care with Dr. Ashok P. Kota at Activerehab. Our tailored treatments in Kondapur and Kompally ensure your spine aligns with your health goals. Rediscover mobility and comfort today!",
       icon: <Brain className="w-8 h-8" />,
       image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?q=80&w=2070&auto=format&fit=crop",
-      color: "from-brandOrange to-brandOrange/80"
+      color: "from-brandBlue to-brandBlue/80"
     },
     {
       title: "Rehabilitation Therapy",
@@ -1065,7 +1065,17 @@ const HomePage = () => {
                     </div>
 
                     <motion.button
-                      type="submit"
+                      type="button"
+                      onClick={() => {
+                        const name = document.querySelector('input[placeholder="Ex: John Doe"]').value || 'Patient';
+                        const phone = document.querySelector('input[placeholder="+91 000 000 0000"]').value || 'Not provided';
+                        const message = document.querySelector('textarea[placeholder="Briefly describe your condition..."]').value || 'Not provided';
+                        
+                        const subject = `New Appointment Request from ${name}`;
+                        const body = `Name: ${name}%0D%0APhone: ${phone}%0D%0AMessage: ${message}%0D%0D%0APlease contact me to schedule an appointment.`;
+                        
+                        window.location.href = `mailto:activerehab.in@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                      }}
                       className="w-full bg-gradient-to-r from-brandBlue to-brandBlue/90 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-brandBlue/20 hover:shadow-2xl hover:shadow-brandBlue/40 transition-all duration-500 relative overflow-hidden group"
                       whileHover={{ y: -5 }}
                       whileTap={{ scale: 0.98 }}
