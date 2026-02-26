@@ -389,12 +389,12 @@ const HomePage = () => {
               whileHover={{ scale: 1.05 }}
               onClick={() => setIsMenuOpen(false)}
             >
-              <img 
-                src="/images/logo.png" 
-                alt="Activerehab Logo" 
-                className="h-14 w-14 object-contain rounded-lg"
+              <img
+                src="/images/logo.png"
+                alt="Activerehab Logo"
+                className="h-20 w-20 object-contain rounded-lg"
               />
-            
+
             </motion.div>
 
             {/* Desktop Navigation */}
@@ -890,7 +890,7 @@ const HomePage = () => {
                     <ChevronLeft className="w-6 h-6" />
                   </button>
                 </div>
-                
+
                 <div className="absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
                   <button
                     onClick={() => setActiveTestimonial(prev => (prev + 1) % testimonials.length)}
