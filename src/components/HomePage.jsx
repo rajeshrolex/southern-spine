@@ -618,7 +618,7 @@ const HomePage = () => {
 
                 <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(46,67,134,0.25)] border-[12px] border-white">
                   <img
-                    src="/images/doctor.jpg"
+                    src="/doctor%20photo.jpg"
                     alt="Dr. Ashok P. Kota"
                     className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000"
                   />
@@ -1070,10 +1070,10 @@ const HomePage = () => {
                         const name = document.querySelector('input[placeholder="Ex: John Doe"]').value || 'Patient';
                         const phone = document.querySelector('input[placeholder="+91 000 000 0000"]').value || 'Not provided';
                         const message = document.querySelector('textarea[placeholder="Briefly describe your condition..."]').value || 'Not provided';
-                        
+
                         const subject = `New Appointment Request from ${name}`;
                         const body = `Name: ${name}%0D%0APhone: ${phone}%0D%0AMessage: ${message}%0D%0D%0APlease contact me to schedule an appointment.`;
-                        
+
                         window.location.href = `mailto:activerehab.in@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                       }}
                       className="w-full bg-gradient-to-r from-brandBlue to-brandBlue/90 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-brandBlue/20 hover:shadow-2xl hover:shadow-brandBlue/40 transition-all duration-500 relative overflow-hidden group"
