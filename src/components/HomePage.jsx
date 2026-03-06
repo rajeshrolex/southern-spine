@@ -376,96 +376,114 @@ const HomePage = () => {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white overflow-x-hidden">
       {/* Navigation Header */}
       <motion.header
-        className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled || isMenuOpen ? 'bg-white shadow-lg' : 'bg-transparent'
+        className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled || isMenuOpen
+          ? 'bg-white shadow-lg shadow-brandBlue/10'
+          : 'bg-white/20 backdrop-blur-sm border-b border-white/40'
           }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <motion.div
-              className="flex items-center space-x-3 cursor-pointer"
-              whileHover={{ scale: 1.05 }}
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="flex justify-between items-center h-16 md:h-20">
+
+            {/* Logo */}
+            <motion.a
+              href="#home"
+              className="flex items-center space-x-3 cursor-pointer group"
+              whileHover={{ scale: 1.03 }}
               onClick={() => setIsMenuOpen(false)}
             >
               <img
                 src="/images/logo.png"
                 alt="Activerehab Logo"
-                className="h-20 w-20 object-contain rounded-lg"
+                className="h-14 md:h-16 w-auto object-contain transition-all duration-300"
               />
-
-            </motion.div>
+            </motion.a>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8">
+            <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
               {navLinks.map((item) => (
                 <motion.a
                   key={item.name}
                   href={item.href}
-                  className="text-gray-700 hover:text-brandBlue transition-colors font-medium relative group"
+                  className={`font-semibold text-sm transition-colors duration-300 relative group ${isScrolled ? 'text-gray-700 hover:text-brandBlue' : 'text-white hover:text-brandOrange'
+                    }`}
                   whileHover={{ y: -2 }}
                 >
                   {item.name}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brandOrange transition-all duration-300 group-hover:w-full"></span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brandOrange transition-all duration-300 group-hover:w-full rounded-full"></span>
                 </motion.a>
               ))}
             </nav>
 
-            <div className="flex items-center space-x-4">
-              <motion.button
-                className="hidden md:flex bg-gradient-to-r from-brandBlue to-brandBlue text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-xl hover:shadow-brandBlue/20 transition-all duration-300 items-center space-x-2 border-2 border-brandBlue hover:bg-white hover:text-brandBlue"
+            <div className="flex items-center space-x-3">
+              <motion.a
+                href="tel:+919000229040"
+                className={`hidden md:flex items-center space-x-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 ${isScrolled
+                  ? 'bg-brandBlue text-white hover:bg-brandBlue/90 shadow-lg shadow-brandBlue/25'
+                  : 'bg-white/20 text-white border border-white/40 hover:bg-white/30 backdrop-blur-sm'
+                  }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Phone className="w-4 h-4" />
                 <span>+91 9000229040</span>
-              </motion.button>
+              </motion.a>
 
               {/* Mobile Menu Toggle */}
               <button
-                className="lg:hidden p-2 text-gray-700 hover:text-secondary-500 transition-colors"
+                className={`lg:hidden p-2 rounded-lg transition-colors ${isScrolled || isMenuOpen ? 'text-brandBlue hover:bg-brandBlue/10' : 'text-white hover:bg-white/20'
+                  }`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="Toggle menu"
               >
-                {isMenuOpen ? <X size={28} className="text-brandBlue" /> : <Menu size={28} className="text-brandBlue" />}
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </div>
           </div>
         </div>
 
         {/* Mobile Navigation Menu */}
-        <motion.div
-          className={`lg:hidden bg-white overflow-hidden border-t border-gray-100 transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
-            }`}
-          initial={false}
-        >
-          <div className="container mx-auto px-4 py-8 flex flex-col space-y-6">
-            {navLinks.map((item, index) => (
-              <motion.a
-                key={item.name}
-                href={item.href}
-                className="text-2xl font-bold text-gray-800 hover:text-brandBlue transition-colors flex items-center justify-between group"
-                initial={{ x: -20, opacity: 0 }}
-                animate={isMenuOpen ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span>{item.name}</span>
-                <ChevronRight className="w-6 h-6 text-brandOrange opacity-0 group-hover:opacity-100 transition-all" />
-              </motion.a>
-            ))}
-            <motion.button
-              className="bg-brandBlue text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-brandBlue/20 flex items-center justify-center space-x-3"
-              initial={{ y: 20, opacity: 0 }}
-              animate={isMenuOpen ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
-              transition={{ delay: 0.5 }}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              className="lg:hidden bg-white border-t border-gray-100 shadow-xl"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <Phone className="w-5 h-5" />
-              <span>+91 9000229040</span>
-            </motion.button>
-          </div>
-        </motion.div>
+              <div className="container mx-auto px-4 py-6 flex flex-col space-y-1">
+                {navLinks.map((item, index) => (
+                  <motion.a
+                    key={item.name}
+                    href={item.href}
+                    className="text-gray-800 hover:text-brandBlue font-semibold py-3 px-4 rounded-xl hover:bg-brandBlue/5 transition-all flex items-center justify-between group"
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: index * 0.07 }}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <span>{item.name}</span>
+                    <ChevronRight className="w-4 h-4 text-brandOrange opacity-0 group-hover:opacity-100 transition-all" />
+                  </motion.a>
+                ))}
+                <motion.a
+                  href="tel:+919000229040"
+                  className="mt-4 bg-brandBlue text-white px-6 py-3.5 rounded-xl font-bold shadow-lg shadow-brandBlue/20 flex items-center justify-center space-x-3"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.35 }}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Phone className="w-5 h-5" />
+                  <span>+91 9000229040</span>
+                </motion.a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.header>
 
       {/* Hero Section */}
@@ -499,7 +517,7 @@ const HomePage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                Visit Our{" "}
+                Hyderabad's{" "}
                 <span className="text-brandOrange underline decoration-white/20 underline-offset-8 drop-shadow-md">
                   Best Chiropractic
                 </span>{" "}
@@ -576,7 +594,7 @@ const HomePage = () => {
                 <div className="relative h-full overflow-hidden rounded-3xl shadow-2xl border-4 border-white">
                   <img
                     src="/hero side.jpg"
-                    alt="Dr. Raghupathi Jadhav - Specialist Care"
+                    alt="Chiropractic Treatment by Dr. Ashok P. Kota - Activerehab Hyderabad"
                     className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brandBlue/40 via-transparent to-transparent opacity-60"></div>
@@ -618,8 +636,9 @@ const HomePage = () => {
 
                 <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(46,67,134,0.25)] border-[12px] border-white">
                   <img
-                    src="/doctor%20photo.jpg"
-                    alt="Dr. Ashok P. Kota"
+                    src="/images/doctorphoto.jpg"
+                    alt="Dr. Ashok P. Kota - Best Chiropractor in Hyderabad"
+                    loading="lazy"
                     className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000"
                   />
                   {/* Floating Identity Label */}
