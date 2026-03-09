@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 import { Phone, Mail, Clock, Award, Users, Heart, ChevronRight, Star, CheckCircle, ArrowRight, Quote, Facebook, Instagram, Linkedin, ArrowUp, Zap, MapPin, Menu, X, Brain, Stethoscope, ShieldCheck, History, Activity, LifeBuoy, ChevronDown, Globe, ChevronLeft } from 'lucide-react';
 
+const WhatsAppIcon = ({ className }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
+  </svg>
+);
 // Internal sub-component for premium interactive cards
 const InteractiveCard = ({ condition, index }) => {
   const mouseX = useMotionValue(0);
@@ -28,8 +33,11 @@ const InteractiveCard = ({ condition, index }) => {
   }
 
   return (
-    <motion.div
-      className="group relative h-full perspective-1000"
+    <motion.a
+      href={`https://wa.me/919000229040?text=${encodeURIComponent(`Hello! I would like to enquire about ${condition.title}.`)}`}
+      target="_blank"
+      rel="noreferrer"
+      className="group relative h-full perspective-1000 block"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -109,28 +117,23 @@ const InteractiveCard = ({ condition, index }) => {
             ))}
           </div>
 
-          <motion.div
-            className="mt-auto pt-6 border-t border-slate-100/50 flex items-center justify-between group/btn cursor-pointer"
-            whileHover={{ x: 8 }}
-            transition={{ type: "spring", stiffness: 400 }}
+          <div
+            className="mt-auto pt-6 border-t border-slate-100/50 flex items-center justify-between group/btn w-full bg-transparent"
           >
             <span className="text-[12px] font-black text-brandBlue uppercase tracking-[0.2em] flex items-center">
               Full Coverage
-              <motion.div
-                className="ml-2"
-                animate={{ x: [0, 5, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-              >
-                <ArrowRight className="w-5 h-5 text-brandOrange" />
-              </motion.div>
             </span>
-          </motion.div>
+            <div className="flex items-center bg-[#25D366] text-white px-3 py-1.5 rounded-full shadow-md group-hover:bg-[#128C7E] transition-colors">
+              <WhatsAppIcon className="w-4 h-4 mr-1.5" />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Enquire</span>
+            </div>
+          </div>
         </div>
 
         {/* Holographic Reflection Layer */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/5 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
       </motion.div>
-    </motion.div>
+    </motion.a>
   );
 };
 
@@ -613,147 +616,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Doctor Profile Section - Artistic Redesign */}
-      <section id="about" className="py-24 lg:py-32 bg-white relative overflow-hidden">
-        {/* Background Accents */}
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-slate-50 skew-x-12 translate-x-1/2 z-0"></div>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-
-            {/* Left: Artistic Image Layout */}
-            <motion.div
-              className="lg:col-span-5 relative"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="relative z-10">
-                {/* Floating Geometric Shapes */}
-                <div className="absolute -top-10 -left-10 w-32 h-32 bg-brandOrange/10 rounded-full blur-2xl animate-pulse"></div>
-                <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-brandBlue/10 rounded-full blur-3xl"></div>
-
-                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(46,67,134,0.25)] border-[12px] border-white">
-                  <img
-                    src="/images/doctorphoto.jpg"
-                    alt="Dr. Ashok P. Kota - Best Chiropractor in Hyderabad"
-                    loading="lazy"
-                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000"
-                  />
-                  {/* Floating Identity Label */}
-                  <div className="absolute bottom-6 left-6 right-6 bg-brandBlue/90 backdrop-blur-md p-6 rounded-2xl text-white border border-white/20 shadow-2xl">
-                    <h3 className="text-xl font-black uppercase tracking-tighter">Dr. Ashok P. Kota</h3>
-                    <p className="text-brandOrange font-bold text-sm tracking-[0.2em] uppercase">Master of Chiropractic</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Experience Badge */}
-              <motion.div
-                className="absolute -top-6 -right-6 bg-white p-6 rounded-[2rem] shadow-2xl border border-slate-100 z-20 hidden md:block"
-                initial={{ scale: 0, rotate: -20 }}
-                whileInView={{ scale: 1, rotate: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5, type: "spring" }}
-              >
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-16 h-16 bg-brandBlue/5 rounded-2xl flex items-center justify-center mb-2">
-                    <Award className="w-8 h-8 text-brandBlue" />
-                  </div>
-                  <div className="text-[10px] uppercase font-black tracking-widest text-slate-400">Awarded</div>
-                  <div className="text-xl font-black text-brandBlue">Best Doctor</div>
-                  <div className="text-xs font-bold text-brandOrange">Excellence Award</div>
-                </div>
-              </motion.div>
-            </motion.div>
-
-            {/* Right: Premium Content Layout */}
-            <motion.div
-              className="lg:col-span-7 space-y-10"
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="space-y-4">
-                <span className="text-brandBlue font-black tracking-[0.3em] uppercase text-xs">Excellence in Healthcare</span>
-                <h2 className="text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1]">
-                  Meet Our <span className="text-brandBlue">Expert</span>
-                </h2>
-                <div className="w-20 h-2 bg-brandOrange rounded-full"></div>
-              </div>
-
-              <p className="text-xl text-slate-600 leading-relaxed font-medium">
-                Activerehab Chiropractic Centre is more than just a clinic—it's your premier destination in Kondapur and Kompally, Hyderabad, where your health and comfort are our top priorities. As the best chiropractic center in Hyderabad, our expert team, led by Dr. Ashok P. Kota, is committed to providing personalized treatment plans tailored to your individual health needs.
-              </p>
-
-              {/* Mission & Vision Section */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                <div className="bg-brandBlue/5 p-6 rounded-3xl border border-brandBlue/10">
-                  <h3 className="text-brandBlue font-black uppercase tracking-widest text-sm mb-3 flex items-center">
-                    <Zap className="w-5 h-5 mr-2" /> Our Mission
-                  </h3>
-                  <p className="text-slate-600 text-sm font-medium leading-relaxed">
-                    To Enhance Lives Through Passionate, Comprehensive Care
-                  </p>
-                </div>
-                <div className="bg-brandOrange/5 p-6 rounded-3xl border border-brandOrange/10">
-                  <h3 className="text-brandOrange font-black uppercase tracking-widest text-sm mb-3 flex items-center">
-                    <Activity className="w-5 h-5 mr-2" /> Our Vision
-                  </h3>
-                  <p className="text-slate-600 text-sm font-medium leading-relaxed">
-                    To Be a Leading Provider of Innovative and Patient-Centered Chiropractic Care
-                  </p>
-                </div>
-              </div>
-
-              {/* Premium Qualification Tags */}
-              <div className="space-y-6">
-                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Qualifications & Mission</h3>
-                <div className="flex flex-wrap gap-3">
-                  {[
-                    { text: "Master of Chiropractic", location: "Certified", color: "blue" },
-                    { text: "Rehabilitation Therapy", location: "Expert", color: "orange" },
-                    { text: "Holistic Care", location: "Patient-Centered", color: "blue" },
-                    { text: "Pain Relief", location: "Specialist", color: "orange" }
-                  ].map((q, i) => (
-                    <motion.div
-                      key={i}
-                      className={`px-6 py-3 rounded-full border shadow-sm flex items-center space-x-3 group cursor-default transition-all ${q.color === 'blue'
-                        ? 'bg-blue-50/50 border-blue-100 hover:bg-blue-100 hover:border-brandBlue/30'
-                        : 'bg-orange-50/50 border-orange-100 hover:bg-orange-100 hover:border-brandOrange/30'
-                        }`}
-                      whileHover={{ y: -3 }}
-                    >
-                      <CheckCircle className={`w-5 h-5 ${q.color === 'blue' ? 'text-brandBlue' : 'text-brandOrange'}`} />
-                      <span className="font-bold text-slate-800 text-sm whitespace-nowrap">
-                        {q.text} <span className="opacity-40 font-medium">({q.location})</span>
-                      </span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Animated Stats Bar */}
-              <div className="grid grid-cols-3 gap-8 pt-8 border-t border-slate-100">
-                {[
-                  { label: "Years Exp", value: "15+", color: "text-brandBlue" },
-                  { label: "Patients", value: "5,000+", color: "text-brandOrange" },
-                  { label: "Branch Clinics", value: "4", color: "text-brandBlue" }
-                ].map((stat, i) => (
-                  <div key={i} className="text-center lg:text-left group">
-                    <div className={`text-4xl font-black ${stat.color} mb-1 transition-transform group-hover:scale-110`}>{stat.value}</div>
-                    <div className="text-xs font-black uppercase tracking-widest text-slate-400">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-
       {/* Pain Conditions Section - Premium Redesign */}
       <section className="py-20 lg:py-32 bg-slate-50/50 relative overflow-hidden">
         {/* Cinematic Background Elements */}
@@ -799,143 +661,6 @@ const HomePage = () => {
             ].map((condition, index) => (
               <InteractiveCard key={index} condition={condition} index={index} />
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Services Section - Super-Premium Overhaul */}
-      <section id="services" className="py-24 lg:py-32 bg-white relative overflow-hidden">
-        {/* Editorial Background Text */}
-        <div className="absolute top-1/2 left-0 w-full text-[20vw] font-black text-slate-50 leading-none select-none pointer-events-none -translate-y-1/2 opacity-50 uppercase tracking-tighter">
-          Excellence
-        </div>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            className="text-center mb-24"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <span className="text-brandBlue font-black tracking-[0.3em] uppercase text-xs mb-6 block">Our Methodology</span>
-            <h2 className="text-5xl lg:text-6xl font-black text-slate-900 mb-8 tracking-tight">
-              Start Your Journey to <span className="text-brandBlue">Better Health</span>
-            </h2>
-            <div className="w-24 h-2 bg-brandOrange mx-auto mb-8 rounded-full"></div>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium italic">
-              "A comprehensive, science-led approach to spine and joint care."
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
-            {services.map((service, index) => (
-              <ServiceCard key={index} service={service} index={index} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-12 lg:py-20 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-72 h-72 bg-blue-100/30 rounded-full blur-3xl -mr-36 -mt-36"></div>
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-cyan-100/30 rounded-full blur-3xl -ml-36 -mb-36"></div>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <span className="text-brandBlue font-bold tracking-widest uppercase text-[10px] mb-3 block underline decoration-brandOrange decoration-2 underline-offset-8">Testimonials</span>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-4">Patient <span className="text-brandBlue">Success</span> <span className="text-brandOrange">Stories</span></h2>
-            <p className="text-base text-gray-600 max-w-xl mx-auto leading-relaxed">
-              Experience the journey of recovery through the words of those who have regained their active lifestyles.
-            </p>
-          </motion.div>
-
-          <div className="max-w-4xl mx-auto">
-            <div className="relative">
-              {/* Decorative Quote Mark */}
-              <div className="absolute -top-8 -left-6 text-blue-100 opacity-40 hidden lg:block">
-                <Quote size={80} fill="currentColor" />
-              </div>
-
-              <motion.div
-                className="bg-white rounded-2xl lg:rounded-[2.5rem] shadow-xl p-6 lg:p-12 border border-gray-100 relative overflow-hidden"
-                key={activeTestimonial}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="grid lg:grid-cols-12 gap-8 items-center">
-                  <div className="lg:col-span-4 flex flex-col items-center text-center">
-                    <div className="relative mb-4">
-                      <div className="w-24 h-24 bg-brandBlue rounded-full flex items-center justify-center text-3xl font-bold text-white shadow-lg shadow-brandBlue/20">
-                        {testimonials[activeTestimonial].name.charAt(0)}
-                      </div>
-                      <div className="absolute -bottom-1 -right-1 bg-brandOrange p-1.5 rounded-full shadow-lg border-2 border-white">
-                        <Star size={12} fill="white" className="text-white" />
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-bold text-brandBlue">{testimonials[activeTestimonial].name}</h4>
-                      <p className="text-brandOrange font-bold text-xs">{testimonials[activeTestimonial].time}</p>
-                    </div>
-                  </div>
-
-                  <div className="lg:col-span-8">
-                    <div className="flex mb-4 space-x-1 justify-center lg:justify-start">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-3.5 h-3.5 ${i < testimonials[activeTestimonial].rating ? 'text-yellow-400 fill-current' : 'text-gray-200'}`} />
-                      ))}
-                    </div>
-                    <blockquote className="text-lg lg:text-xl text-gray-800 font-medium leading-relaxed mb-6 relative text-center lg:text-left">
-                      <span className="text-blue-600 text-2xl leading-none font-serif ml-[-1rem] mr-1">"</span>
-                      {testimonials[activeTestimonial].content}
-                      <span className="text-blue-600 text-2xl leading-none font-serif ml-1">"</span>
-                    </blockquote>
-                  </div>
-                </div>
-
-                {/* Navigation Arrows */}
-                <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 z-10">
-                  <button
-                    onClick={() => setActiveTestimonial(prev => (prev - 1 + testimonials.length) % testimonials.length)}
-                    className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-brandBlue hover:text-white transition-all duration-300 border border-gray-200"
-                    aria-label="Previous testimonial"
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </button>
-                </div>
-
-                <div className="absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                  <button
-                    onClick={() => setActiveTestimonial(prev => (prev + 1) % testimonials.length)}
-                    className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-brandBlue hover:text-white transition-all duration-300 border border-gray-200"
-                    aria-label="Next testimonial"
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
-                </div>
-
-                {/* Dots Indicator */}
-                <div className="mt-8 flex justify-center lg:justify-end space-x-2">
-                  {testimonials.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActiveTestimonial(index)}
-                      className={`h-1.5 rounded-full transition-all duration-500 ${index === activeTestimonial
-                        ? 'bg-brandOrange w-8'
-                        : 'bg-gray-200 hover:bg-gray-300 w-1.5'
-                        }`}
-                      aria-label={`Go to testimonial ${index + 1}`}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            </div>
           </div>
         </div>
       </section>
@@ -1114,6 +839,284 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Doctor Profile Section - Artistic Redesign */}
+      <section id="about" className="py-24 lg:py-32 bg-white relative overflow-hidden">
+        {/* Background Accents */}
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-slate-50 skew-x-12 translate-x-1/2 z-0"></div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+
+            {/* Left: Artistic Image Layout */}
+            <motion.div
+              className="lg:col-span-5 relative"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="relative z-10">
+                {/* Floating Geometric Shapes */}
+                <div className="absolute -top-10 -left-10 w-32 h-32 bg-brandOrange/10 rounded-full blur-2xl animate-pulse"></div>
+                <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-brandBlue/10 rounded-full blur-3xl"></div>
+
+                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(46,67,134,0.25)] border-[12px] border-white">
+                  <img
+                    src="/images/doctorphoto.jpg"
+                    alt="Dr. Ashok P. Kota - Best Chiropractor in Hyderabad"
+                    loading="lazy"
+                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000"
+                  />
+                  {/* Floating Identity Label */}
+                  <div className="absolute bottom-6 left-6 right-6 bg-brandBlue/90 backdrop-blur-md p-6 rounded-2xl text-white border border-white/20 shadow-2xl">
+                    <h3 className="text-xl font-black uppercase tracking-tighter">Dr. Ashok P. Kota</h3>
+                    <p className="text-brandOrange font-bold text-sm tracking-[0.2em] uppercase">Master of Chiropractic</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Experience Badge */}
+              <motion.div
+                className="absolute -top-6 -right-6 bg-white p-6 rounded-[2rem] shadow-2xl border border-slate-100 z-20 hidden md:block"
+                initial={{ scale: 0, rotate: -20 }}
+                whileInView={{ scale: 1, rotate: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5, type: "spring" }}
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-brandBlue/5 rounded-2xl flex items-center justify-center mb-2">
+                    <Award className="w-8 h-8 text-brandBlue" />
+                  </div>
+                  <div className="text-[10px] uppercase font-black tracking-widest text-slate-400">Awarded</div>
+                  <div className="text-xl font-black text-brandBlue">Best Doctor</div>
+                  <div className="text-xs font-bold text-brandOrange">Excellence Award</div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Right: Premium Content Layout */}
+            <motion.div
+              className="lg:col-span-7 space-y-10"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="space-y-4">
+                <span className="text-brandBlue font-black tracking-[0.3em] uppercase text-xs">Excellence in Healthcare</span>
+                <h2 className="text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1]">
+                  Meet Our <span className="text-brandBlue">Expert</span>
+                </h2>
+                <div className="w-20 h-2 bg-brandOrange rounded-full"></div>
+              </div>
+
+              <p className="text-xl text-slate-600 leading-relaxed font-medium">
+                Activerehab Chiropractic Centre is more than just a clinic—it's your premier destination in Kondapur and Kompally, Hyderabad, where your health and comfort are our top priorities. As the best chiropractic center in Hyderabad, our expert team, led by Dr. Ashok P. Kota, is committed to providing personalized treatment plans tailored to your individual health needs.
+              </p>
+
+              {/* Mission & Vision Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                <div className="bg-brandBlue/5 p-6 rounded-3xl border border-brandBlue/10">
+                  <h3 className="text-brandBlue font-black uppercase tracking-widest text-sm mb-3 flex items-center">
+                    <Zap className="w-5 h-5 mr-2" /> Our Mission
+                  </h3>
+                  <p className="text-slate-600 text-sm font-medium leading-relaxed">
+                    To Enhance Lives Through Passionate, Comprehensive Care
+                  </p>
+                </div>
+                <div className="bg-brandOrange/5 p-6 rounded-3xl border border-brandOrange/10">
+                  <h3 className="text-brandOrange font-black uppercase tracking-widest text-sm mb-3 flex items-center">
+                    <Activity className="w-5 h-5 mr-2" /> Our Vision
+                  </h3>
+                  <p className="text-slate-600 text-sm font-medium leading-relaxed">
+                    To Be a Leading Provider of Innovative and Patient-Centered Chiropractic Care
+                  </p>
+                </div>
+              </div>
+
+              {/* Premium Qualification Tags */}
+              <div className="space-y-6">
+                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Qualifications & Mission</h3>
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    { text: "Master of Chiropractic", location: "Certified", color: "blue" },
+                    { text: "Rehabilitation Therapy", location: "Expert", color: "orange" },
+                    { text: "Holistic Care", location: "Patient-Centered", color: "blue" },
+                    { text: "Pain Relief", location: "Specialist", color: "orange" }
+                  ].map((q, i) => (
+                    <motion.div
+                      key={i}
+                      className={`px-6 py-3 rounded-full border shadow-sm flex items-center space-x-3 group cursor-default transition-all ${q.color === 'blue'
+                        ? 'bg-blue-50/50 border-blue-100 hover:bg-blue-100 hover:border-brandBlue/30'
+                        : 'bg-orange-50/50 border-orange-100 hover:bg-orange-100 hover:border-brandOrange/30'
+                        }`}
+                      whileHover={{ y: -3 }}
+                    >
+                      <CheckCircle className={`w-5 h-5 ${q.color === 'blue' ? 'text-brandBlue' : 'text-brandOrange'}`} />
+                      <span className="font-bold text-slate-800 text-sm whitespace-nowrap">
+                        {q.text} <span className="opacity-40 font-medium">({q.location})</span>
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Animated Stats Bar */}
+              <div className="grid grid-cols-3 gap-8 pt-8 border-t border-slate-100">
+                {[
+                  { label: "Years Exp", value: "15+", color: "text-brandBlue" },
+                  { label: "Patients", value: "5,000+", color: "text-brandOrange" },
+                  { label: "Branch Clinics", value: "4", color: "text-brandBlue" }
+                ].map((stat, i) => (
+                  <div key={i} className="text-center lg:text-left group">
+                    <div className={`text-4xl font-black ${stat.color} mb-1 transition-transform group-hover:scale-110`}>{stat.value}</div>
+                    <div className="text-xs font-black uppercase tracking-widest text-slate-400">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+
+      {/* Services Section - Super-Premium Overhaul */}
+      <section id="services" className="py-24 lg:py-32 bg-white relative overflow-hidden">
+        {/* Editorial Background Text */}
+        <div className="absolute top-1/2 left-0 w-full text-[20vw] font-black text-slate-50 leading-none select-none pointer-events-none -translate-y-1/2 opacity-50 uppercase tracking-tighter">
+          Excellence
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            className="text-center mb-24"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="text-brandBlue font-black tracking-[0.3em] uppercase text-xs mb-6 block">Our Methodology</span>
+            <h2 className="text-5xl lg:text-6xl font-black text-slate-900 mb-8 tracking-tight">
+              Start Your Journey to <span className="text-brandBlue">Better Health</span>
+            </h2>
+            <div className="w-24 h-2 bg-brandOrange mx-auto mb-8 rounded-full"></div>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium italic">
+              "A comprehensive, science-led approach to spine and joint care."
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
+            {services.map((service, index) => (
+              <ServiceCard key={index} service={service} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-12 lg:py-20 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-72 h-72 bg-blue-100/30 rounded-full blur-3xl -mr-36 -mt-36"></div>
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-cyan-100/30 rounded-full blur-3xl -ml-36 -mb-36"></div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="text-brandBlue font-bold tracking-widest uppercase text-[10px] mb-3 block underline decoration-brandOrange decoration-2 underline-offset-8">Testimonials</span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-4">Patient <span className="text-brandBlue">Success</span> <span className="text-brandOrange">Stories</span></h2>
+            <p className="text-base text-gray-600 max-w-xl mx-auto leading-relaxed">
+              Experience the journey of recovery through the words of those who have regained their active lifestyles.
+            </p>
+          </motion.div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="relative">
+              {/* Decorative Quote Mark */}
+              <div className="absolute -top-8 -left-6 text-blue-100 opacity-40 hidden lg:block">
+                <Quote size={80} fill="currentColor" />
+              </div>
+
+              <motion.div
+                className="bg-white rounded-2xl lg:rounded-[2.5rem] shadow-xl p-6 lg:p-12 border border-gray-100 relative overflow-hidden"
+                key={activeTestimonial}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="grid lg:grid-cols-12 gap-8 items-center">
+                  <div className="lg:col-span-4 flex flex-col items-center text-center">
+                    <div className="relative mb-4">
+                      <div className="w-24 h-24 bg-brandBlue rounded-full flex items-center justify-center text-3xl font-bold text-white shadow-lg shadow-brandBlue/20">
+                        {testimonials[activeTestimonial].name.charAt(0)}
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 bg-brandOrange p-1.5 rounded-full shadow-lg border-2 border-white">
+                        <Star size={12} fill="white" className="text-white" />
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-brandBlue">{testimonials[activeTestimonial].name}</h4>
+                      <p className="text-brandOrange font-bold text-xs">{testimonials[activeTestimonial].time}</p>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-8">
+                    <div className="flex mb-4 space-x-1 justify-center lg:justify-start">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={`w-3.5 h-3.5 ${i < testimonials[activeTestimonial].rating ? 'text-yellow-400 fill-current' : 'text-gray-200'}`} />
+                      ))}
+                    </div>
+                    <blockquote className="text-lg lg:text-xl text-gray-800 font-medium leading-relaxed mb-6 relative text-center lg:text-left">
+                      <span className="text-blue-600 text-2xl leading-none font-serif ml-[-1rem] mr-1">"</span>
+                      {testimonials[activeTestimonial].content}
+                      <span className="text-blue-600 text-2xl leading-none font-serif ml-1">"</span>
+                    </blockquote>
+                  </div>
+                </div>
+
+                {/* Navigation Arrows */}
+                <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 z-10">
+                  <button
+                    onClick={() => setActiveTestimonial(prev => (prev - 1 + testimonials.length) % testimonials.length)}
+                    className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-brandBlue hover:text-white transition-all duration-300 border border-gray-200"
+                    aria-label="Previous testimonial"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                </div>
+
+                <div className="absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                  <button
+                    onClick={() => setActiveTestimonial(prev => (prev + 1) % testimonials.length)}
+                    className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-brandBlue hover:text-white transition-all duration-300 border border-gray-200"
+                    aria-label="Next testimonial"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                </div>
+
+                {/* Dots Indicator */}
+                <div className="mt-8 flex justify-center lg:justify-end space-x-2">
+                  {testimonials.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setActiveTestimonial(index)}
+                      className={`h-1.5 rounded-full transition-all duration-500 ${index === activeTestimonial
+                        ? 'bg-brandOrange w-8'
+                        : 'bg-gray-200 hover:bg-gray-300 w-1.5'
+                        }`}
+                      aria-label={`Go to testimonial ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Re-designed Professional Footer */}
       <footer className="bg-[#0f172a] text-white pt-24 pb-12 relative overflow-hidden">
         {/* Abstract Background Element */}
@@ -1241,7 +1244,7 @@ const HomePage = () => {
         {/* Floating Back to Top */}
         <motion.button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-8 right-8 bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 transition-colors z-50 flex items-center justify-center"
+          className="fixed bottom-24 right-8 bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 transition-colors z-50 flex items-center justify-center"
           whileHover={{ y: -5, scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           initial={{ opacity: 0 }}
@@ -1249,6 +1252,24 @@ const HomePage = () => {
         >
           <ArrowUp size={24} />
         </motion.button>
+
+        {/* Floating WhatsApp Button */}
+        <motion.a
+          href="https://wa.me/919000229040?text=Hello!%20I%20would%20like%20to%20enquire%20about%20your%20services."
+          target="_blank"
+          rel="noreferrer"
+          className="fixed bottom-8 right-8 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:bg-[#128C7E] shadow-[#25D366]/30 transition-all duration-300 z-50 flex items-center justify-center group"
+          whileHover={{ y: -5, scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <WhatsAppIcon className="w-8 h-8" />
+          <span className="absolute right-full mr-4 whitespace-nowrap bg-white text-slate-800 text-sm font-bold px-4 py-2 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none -translate-x-4 group-hover:translate-x-0">
+            Chat with us
+          </span>
+        </motion.a>
       </footer>
     </div>
   );
