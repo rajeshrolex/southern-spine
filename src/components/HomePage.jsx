@@ -227,6 +227,12 @@ const ServiceCard = ({ service, index }) => {
             className={`mt-auto w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-white bg-gradient-to-r ${service.color} shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              const element = document.getElementById('contact');
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
           >
             <span>Discover More</span>
             <ArrowRight className="w-4 h-4" />
@@ -379,7 +385,7 @@ const HomePage = () => {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white overflow-x-hidden">
       {/* Navigation Header */}
       <motion.header
-        className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled || isMenuOpen
+        className={`fixed top-0 w-full z-[60] transition-all duration-500 ${isScrolled || isMenuOpen
           ? 'bg-white shadow-lg shadow-brandBlue/10'
           : 'bg-white/20 backdrop-blur-sm border-b border-white/40'
           }`}
@@ -390,7 +396,6 @@ const HomePage = () => {
         <div className="container mx-auto px-4 md:px-8">
           <div className="flex justify-between items-center h-16 md:h-20">
 
-            {/* Logo */}
             <motion.a
               href="#home"
               className="flex items-center space-x-3 cursor-pointer group"
@@ -436,7 +441,7 @@ const HomePage = () => {
 
               {/* Mobile Menu Toggle */}
               <button
-                className={`lg:hidden p-2 rounded-lg transition-colors ${isScrolled || isMenuOpen ? 'text-brandBlue hover:bg-brandBlue/10' : 'text-white hover:bg-white/20'
+                className={`lg:hidden p-2 rounded-lg transition-colors relative z-10 ${isScrolled || isMenuOpen ? 'text-brandBlue hover:bg-brandBlue/10' : 'text-white hover:bg-white/20'
                   }`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="Toggle menu"
@@ -466,7 +471,17 @@ const HomePage = () => {
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: index * 0.07 }}
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsMenuOpen(false);
+                      const targetId = item.href.replace('#', '');
+                      const element = document.getElementById(targetId);
+                      if (element) {
+                        setTimeout(() => {
+                          element.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                      }
+                    }}
                   >
                     <span>{item.name}</span>
                     <ChevronRight className="w-4 h-4 text-brandOrange opacity-0 group-hover:opacity-100 transition-all" />
@@ -490,7 +505,7 @@ const HomePage = () => {
       </motion.header>
 
       {/* Hero Section */}
-      <section id="home" className="pt-24 min-h-screen flex items-center relative overflow-hidden bg-brandBlue">
+      <section id="home" className="pt-24 min-h-screen flex items-center relative overflow-hidden bg-brandBlue scroll-mt-20">
         {/* Cinematic Video Background */}
         <div className="absolute inset-0 z-0">
           <video
@@ -617,7 +632,7 @@ const HomePage = () => {
       </section>
 
       {/* Pain Conditions Section - Premium Redesign */}
-      <section className="py-20 lg:py-32 bg-slate-50/50 relative overflow-hidden">
+      <section id="services" className="py-20 lg:py-32 bg-slate-50/50 relative overflow-hidden scroll-mt-20">
         {/* Cinematic Background Elements */}
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/40 rounded-full blur-[120px] -translate-y-1/2"></div>
@@ -666,7 +681,7 @@ const HomePage = () => {
       </section>
 
       {/* Contact Section - Premium Overhaul */}
-      <section id="contact" className="py-24 lg:py-32 bg-slate-50/30 relative overflow-hidden">
+      <section id="contact" className="py-24 lg:py-32 bg-slate-50/30 relative overflow-hidden scroll-mt-20">
         {/* Background Decorative Blobs */}
         <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-brandBlue/5 rounded-full blur-[120px] -translate-y-1/2"></div>
         <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-brandOrange/5 rounded-full blur-[120px] translate-y-1/2"></div>
@@ -840,7 +855,7 @@ const HomePage = () => {
       </section>
 
       {/* Doctor Profile Section - Artistic Redesign */}
-      <section id="about" className="py-24 lg:py-32 bg-white relative overflow-hidden">
+      <section id="about" className="py-24 lg:py-32 bg-white relative overflow-hidden scroll-mt-20">
         {/* Background Accents */}
         <div className="absolute top-0 right-0 w-1/3 h-full bg-slate-50 skew-x-12 translate-x-1/2 z-0"></div>
 
@@ -981,7 +996,7 @@ const HomePage = () => {
 
 
       {/* Services Section - Super-Premium Overhaul */}
-      <section id="services" className="py-24 lg:py-32 bg-white relative overflow-hidden">
+      <section className="py-24 lg:py-32 bg-white relative overflow-hidden">
         {/* Editorial Background Text */}
         <div className="absolute top-1/2 left-0 w-full text-[20vw] font-black text-slate-50 leading-none select-none pointer-events-none -translate-y-1/2 opacity-50 uppercase tracking-tighter">
           Excellence
@@ -1013,7 +1028,7 @@ const HomePage = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-12 lg:py-20 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
+      <section id="testimonials" className="py-12 lg:py-20 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden scroll-mt-20">
         <div className="absolute top-0 right-0 w-72 h-72 bg-blue-100/30 rounded-full blur-3xl -mr-36 -mt-36"></div>
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-cyan-100/30 rounded-full blur-3xl -ml-36 -mb-36"></div>
 
@@ -1163,11 +1178,17 @@ const HomePage = () => {
                 <span className="absolute -bottom-2 left-0 w-12 h-1 bg-brandOrange rounded-full"></span>
               </h4>
               <ul className="space-y-4">
-                {['Home', 'About Us', 'Services', 'Success Stories', 'Book Appointment'].map((link) => (
-                  <li key={link}>
-                    <a href={`#${link.toLowerCase().replace(' ', '')}`} className="text-slate-400 hover:text-white hover:translate-x-2 transition-all duration-300 flex items-center group">
+                {[
+                  { name: 'Home', href: '#home' },
+                  { name: 'About Us', href: '#about' },
+                  { name: 'Services', href: '#services' },
+                  { name: 'Success Stories', href: '#testimonials' },
+                  { name: 'Book Appointment', href: '#contact' }
+                ].map((link) => (
+                  <li key={link.name}>
+                    <a href={link.href} className="text-slate-400 hover:text-white hover:translate-x-2 transition-all duration-300 flex items-center group">
                       <ChevronRight className="w-4 h-4 text-brandOrange opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all" />
-                      {link}
+                      {link.name}
                     </a>
                   </li>
                 ))}
@@ -1252,6 +1273,22 @@ const HomePage = () => {
         >
           <ArrowUp size={24} />
         </motion.button>
+
+        {/* Floating Call Button */}
+        <motion.a
+          href="tel:+919000229040"
+          className="fixed bottom-8 left-8 bg-brandBlue text-white p-4 rounded-full shadow-2xl hover:bg-brandBlue/90 shadow-brandBlue/30 transition-all duration-300 z-50 flex items-center justify-center group"
+          whileHover={{ y: -5, scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <Phone className="w-8 h-8" />
+          <span className="absolute left-full ml-4 whitespace-nowrap bg-white text-slate-800 text-sm font-bold px-4 py-2 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none translate-x-4 group-hover:translate-x-0">
+            Call us
+          </span>
+        </motion.a>
 
         {/* Floating WhatsApp Button */}
         <motion.a
