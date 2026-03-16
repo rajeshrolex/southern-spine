@@ -696,6 +696,19 @@ const HomePage = () => {
                         />
                     </div>
 
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                      <div className="space-y-1.5 flex flex-col items-start w-full sm:col-span-2">
+                        <label className="text-xs font-bold uppercase tracking-wider text-slate-300 ml-2">Your Area / Location</label>
+                        <input
+                          type="text"
+                          name="user_location"
+                          required
+                          placeholder="e.g. Gachibowli"
+                          className="w-full px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl bg-white/10 border border-white/20 focus:bg-white/20 focus:border-brandOrange focus:ring-2 focus:ring-brandOrange/50 transition-all duration-300 text-white font-medium placeholder:text-slate-400 outline-none"
+                        />
+                      </div>
+                    </div>
+
                     <div className="space-y-1.5 flex flex-col items-start w-full">
                       <label className="text-xs font-bold uppercase tracking-wider text-slate-300 ml-2">Your Condition / Message</label>
                       <textarea
@@ -885,8 +898,8 @@ const HomePage = () => {
             >
               <div className="relative p-[1px] rounded-[3rem] bg-gradient-to-br from-white via-white to-brandOrange/20 shadow-2xl">
                 <div className="bg-white/90 backdrop-blur-2xl rounded-[3rem] p-10 lg:p-14">
-                  <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Quick Appointment</h3>
-                  <p className="text-slate-500 font-bold mb-10">Fill the form below and we'll reach out shortly.</p>
+                  <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Book Appointment</h3>
+                  <p className="text-slate-500 font-bold mb-10">Fill out the form below and we will contact you shortly.</p>
 
                   <form ref={contactFormRef} onSubmit={handleContactSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -896,12 +909,12 @@ const HomePage = () => {
                           type="text"
                           name="user_name"
                           required
-                          placeholder="Ex: John Doe"
+                          placeholder="John Doe"
                           className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300 outline-none"
                         />
                       </div>
                       <div className="space-y-2 text-left">
-                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Phone Number</label>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Phone</label>
                         <input
                           type="tel"
                           name="user_phone"
@@ -922,12 +935,25 @@ const HomePage = () => {
                         />
                     </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="md:col-span-2 space-y-2 text-left">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Your Area / Location</label>
+                        <input
+                          type="text"
+                          name="user_location"
+                          required
+                          placeholder="e.g. Gachibowli"
+                          className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300 outline-none"
+                        />
+                      </div>
+                    </div>
+
                     <div className="space-y-2 text-left">
-                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Your Message</label>
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Your Condition / Message</label>
                       <textarea
                         name="message"
                         required
-                        placeholder="Briefly describe your priority or question..."
+                        placeholder="Briefly describe your conditon..."
                         rows={4}
                         className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300 resize-none outline-none"
                       />
@@ -940,7 +966,7 @@ const HomePage = () => {
                       whileHover={!isContactSubmitting ? { y: -5 } : {}}
                       whileTap={!isContactSubmitting ? { scale: 0.98 } : {}}
                     >
-                      <span className="relative z-10">{isContactSubmitting ? 'Sending Request...' : 'Send Appointment Request'}</span>
+                      <span className="relative z-10">{isContactSubmitting ? 'Sending Request...' : 'Request Appointment'}</span>
                       {!isContactSubmitting && <div className="absolute inset-0 bg-gradient-to-r from-brandOrange to-brandOrange/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>}
                     </motion.button>
                   </form>
