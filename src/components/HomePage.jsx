@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import emailjs from '@emailjs/browser';
+import toast, { Toaster } from 'react-hot-toast';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 import { Phone, Mail, Clock, Award, Users, Heart, ChevronRight, Star, CheckCircle, ArrowRight, Quote, Facebook, Instagram, Linkedin, ArrowUp, Zap, MapPin, Menu, X, Brain, Stethoscope, ShieldCheck, History, Activity, LifeBuoy, ChevronDown, Globe, ChevronLeft } from 'lucide-react';
 
@@ -251,6 +253,54 @@ const HomePage = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // EmailJS integration for Hero Appointment Form
+  const heroFormRef = useRef();
+  const [isHeroSubmitting, setIsHeroSubmitting] = useState(false);
+
+  // EmailJS integration for Contact Section Form
+  const contactFormRef = useRef();
+  const [isContactSubmitting, setIsContactSubmitting] = useState(false);
+
+  const handleHeroSubmit = (e) => {
+    e.preventDefault();
+    setIsHeroSubmitting(true);
+
+    emailjs.sendForm(
+      'service_xnocv4r',
+      'template_ihtju25',
+      heroFormRef.current,
+      'iEz80bY3eySot8Qa9'
+    )
+    .then((result) => {
+        toast.success("Appointment request sent successfully!");
+        heroFormRef.current.reset();
+        setIsHeroSubmitting(false);
+    }, (error) => {
+        toast.error("Failed to send request. Please try again or call us.");
+        setIsHeroSubmitting(false);
+    });
+  };
+
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    setIsContactSubmitting(true);
+
+    emailjs.sendForm(
+      'service_xnocv4r',
+      'template_ihtju25',
+      contactFormRef.current,
+      'iEz80bY3eySot8Qa9'
+    )
+    .then((result) => {
+        toast.success("Message sent successfully!");
+        contactFormRef.current.reset();
+        setIsContactSubmitting(false);
+    }, (error) => {
+        toast.error("Failed to send message. Please try again or call us.");
+        setIsContactSubmitting(false);
+    });
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -359,7 +409,7 @@ const HomePage = () => {
       subtitle: "Personalized Care",
       description: "Experience personalized chiropractic care with Dr. Ashok P. Kota at Activerehab. Our tailored treatments in Kondapur and Kompally ensure your spine aligns with your health goals. Rediscover mobility and comfort today!",
       icon: <Brain className="w-8 h-8" />,
-      image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?q=80&w=2070&auto=format&fit=crop",
+      image: "/images/chiropractic-adjustments.png",
       color: "from-brandBlue to-brandBlue/80"
     },
     {
@@ -367,7 +417,7 @@ const HomePage = () => {
       subtitle: "Improved Movement",
       description: "Step into a world of improved movement at Activerehab. Under Dr. Ashok P. Kota's expert guidance in Hyderabad, our rehabilitation therapy sessions are designed to strengthen and heal. Begin your journey to full recovery now!",
       icon: <ShieldCheck className="w-8 h-8" />,
-      image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop",
+      image: "/images/rehab-therapy.png",
       color: "from-brandBlue to-brandBlue/80"
     },
     {
@@ -375,7 +425,7 @@ const HomePage = () => {
       subtitle: "Precise Corrections",
       description: "Perfect your posture with precise corrections at Activerehab. Dr. Ashok P. Kota's specialized approach in Kondapur and Kompally helps align your body and enhance wellbeing. Transform your posture and enhance your lifestyle!",
       icon: <Activity className="w-8 h-8" />,
-      image: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?q=80&w=1974&auto=format&fit=crop",
+      image: "/images/posture-correction.png",
       color: "from-brandBlue to-brandBlue/80"
     }
   ];
@@ -383,6 +433,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white overflow-x-hidden">
+      <Toaster position="top-right" />
       {/* Navigation Header */}
       <motion.header
         className={`fixed top-0 w-full z-[60] transition-all duration-500 ${isScrolled || isMenuOpen
@@ -601,29 +652,71 @@ const HomePage = () => {
             </motion.div>
 
             <motion.div
-              className="relative order-last lg:order-last"
+              className="relative order-last lg:order-last w-full"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="relative w-full aspect-square sm:aspect-video lg:aspect-auto sm:min-h-[400px] lg:min-h-[500px]">
-                <div className="absolute inset-0 bg-brandBlue rounded-3xl transform rotate-2 opacity-10"></div>
-                <div className="absolute inset-0 bg-brandOrange rounded-3xl transform -rotate-2 opacity-10"></div>
-                <div className="relative h-full overflow-hidden rounded-3xl shadow-2xl border-4 border-white">
-                  <img
-                    src="/hero side.jpg"
-                    alt="Chiropractic Treatment by Dr. Ashok P. Kota - Activerehab Hyderabad"
-                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-brandBlue/40 via-transparent to-transparent opacity-60"></div>
-                  <div className="absolute bottom-6 left-6 right-6 text-white">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <div className="w-8 h-8 bg-brandOrange rounded-full flex items-center justify-center">
-                        <Heart className="w-4 h-4 text-white" />
+              <div className="relative p-[1px] rounded-[2.5rem] bg-gradient-to-br from-white/20 via-white/5 to-brandOrange/20 shadow-2xl backdrop-blur-md">
+                <div className="bg-black/40 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-8 lg:p-10 border border-white/10">
+                  <h3 className="text-2xl sm:text-3xl font-black text-white mb-2 tracking-tight">Book Appointment</h3>
+                  <p className="text-slate-300 font-medium mb-8 text-sm sm:text-base">Fill out the form below and we will contact you shortly.</p>
+
+                  <form ref={heroFormRef} onSubmit={handleHeroSubmit} className="space-y-4 sm:space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                      <div className="space-y-1.5 flex flex-col items-start w-full">
+                        <label className="text-xs font-bold uppercase tracking-wider text-slate-300 ml-2">Full Name</label>
+                        <input
+                          type="text"
+                          name="user_name"
+                          required
+                          placeholder="John Doe"
+                          className="w-full px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl bg-white/10 border border-white/20 focus:bg-white/20 focus:border-brandOrange focus:ring-2 focus:ring-brandOrange/50 transition-all duration-300 text-white font-medium placeholder:text-slate-400 outline-none"
+                        />
                       </div>
-                      <span className="font-semibold text-sm">Expert Spine & Joint Care</span>
+                      <div className="space-y-1.5 flex flex-col items-start w-full">
+                        <label className="text-xs font-bold uppercase tracking-wider text-slate-300 ml-2">Phone</label>
+                        <input
+                          type="tel"
+                          name="user_phone"
+                          required
+                          placeholder="+91 000 000 0000"
+                          className="w-full px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl bg-white/10 border border-white/20 focus:bg-white/20 focus:border-brandOrange focus:ring-2 focus:ring-brandOrange/50 transition-all duration-300 text-white font-medium placeholder:text-slate-400 outline-none"
+                        />
+                      </div>
                     </div>
-                  </div>
+                    
+                    <div className="space-y-1.5 flex flex-col items-start w-full">
+                        <label className="text-xs font-bold uppercase tracking-wider text-slate-300 ml-2">Email Address</label>
+                        <input
+                          type="email"
+                          name="user_email"
+                          placeholder="john@example.com"
+                          className="w-full px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl bg-white/10 border border-white/20 focus:bg-white/20 focus:border-brandOrange focus:ring-2 focus:ring-brandOrange/50 transition-all duration-300 text-white font-medium placeholder:text-slate-400 outline-none"
+                        />
+                    </div>
+
+                    <div className="space-y-1.5 flex flex-col items-start w-full">
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-300 ml-2">Your Condition / Message</label>
+                      <textarea
+                        name="message"
+                        required
+                        placeholder="Briefly describe your conditon..."
+                        rows={3}
+                        className="w-full px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl bg-white/10 border border-white/20 focus:bg-white/20 focus:border-brandOrange focus:ring-2 focus:ring-brandOrange/50 transition-all duration-300 text-white font-medium placeholder:text-slate-400 resize-none outline-none"
+                      />
+                    </div>
+
+                    <motion.button
+                      type="submit"
+                      disabled={isHeroSubmitting}
+                      className={`w-full bg-brandOrange text-white py-4 rounded-xl font-bold text-sm uppercase tracking-widest shadow-lg shadow-brandOrange/20 hover:shadow-xl hover:bg-orange-600 transition-all duration-300 flex justify-center items-center space-x-2 ${isHeroSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                      whileHover={!isHeroSubmitting ? { y: -2 } : {}}
+                      whileTap={!isHeroSubmitting ? { scale: 0.98 } : {}}
+                    >
+                      <span>{isHeroSubmitting ? 'Sending Request...' : 'Request Appointment'}</span>
+                    </motion.button>
+                  </form>
                 </div>
               </div>
             </motion.div>
@@ -795,52 +888,60 @@ const HomePage = () => {
                   <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Quick Appointment</h3>
                   <p className="text-slate-500 font-bold mb-10">Fill the form below and we'll reach out shortly.</p>
 
-                  <form className="space-y-6">
+                  <form ref={contactFormRef} onSubmit={handleContactSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
+                      <div className="space-y-2 text-left">
                         <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Full Name</label>
                         <input
                           type="text"
+                          name="user_name"
+                          required
                           placeholder="Ex: John Doe"
-                          className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300"
+                          className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300 outline-none"
                         />
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-2 text-left">
                         <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Phone Number</label>
                         <input
                           type="tel"
+                          name="user_phone"
+                          required
                           placeholder="+91 000 000 0000"
-                          className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300"
+                          className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300 outline-none"
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
+                    
+                    <div className="space-y-2 text-left">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Email Address</label>
+                        <input
+                          type="email"
+                          name="user_email"
+                          placeholder="john@example.com"
+                          className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300 outline-none"
+                        />
+                    </div>
+
+                    <div className="space-y-2 text-left">
                       <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-4">Your Message</label>
                       <textarea
-                        placeholder="Briefly describe your condition..."
+                        name="message"
+                        required
+                        placeholder="Briefly describe your priority or question..."
                         rows={4}
-                        className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300 resize-none"
+                        className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:border-brandBlue focus:ring-4 focus:ring-brandBlue/5 transition-all duration-300 font-bold placeholder:text-slate-300 resize-none outline-none"
                       />
                     </div>
 
                     <motion.button
-                      type="button"
-                      onClick={() => {
-                        const name = document.querySelector('input[placeholder="Ex: John Doe"]').value || 'Patient';
-                        const phone = document.querySelector('input[placeholder="+91 000 000 0000"]').value || 'Not provided';
-                        const message = document.querySelector('textarea[placeholder="Briefly describe your condition..."]').value || 'Not provided';
-
-                        const subject = `New Appointment Request from ${name}`;
-                        const body = `Name: ${name}%0D%0APhone: ${phone}%0D%0AMessage: ${message}%0D%0D%0APlease contact me to schedule an appointment.`;
-
-                        window.location.href = `mailto:activerehab.in@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                      }}
-                      className="w-full bg-gradient-to-r from-brandBlue to-brandBlue/90 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-brandBlue/20 hover:shadow-2xl hover:shadow-brandBlue/40 transition-all duration-500 relative overflow-hidden group"
-                      whileHover={{ y: -5 }}
-                      whileTap={{ scale: 0.98 }}
+                      type="submit"
+                      disabled={isContactSubmitting}
+                      className={`w-full bg-gradient-to-r ${isContactSubmitting ? 'from-slate-400 to-slate-500 cursor-not-allowed' : 'from-brandBlue to-brandBlue/90 hover:shadow-2xl hover:shadow-brandBlue/40 cursor-pointer'} text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-brandBlue/20 transition-all duration-500 relative overflow-hidden group flex items-center justify-center space-x-2`}
+                      whileHover={!isContactSubmitting ? { y: -5 } : {}}
+                      whileTap={!isContactSubmitting ? { scale: 0.98 } : {}}
                     >
-                      <span className="relative z-10">Send Appointment Request</span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-brandOrange to-brandOrange/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <span className="relative z-10">{isContactSubmitting ? 'Sending Request...' : 'Send Appointment Request'}</span>
+                      {!isContactSubmitting && <div className="absolute inset-0 bg-gradient-to-r from-brandOrange to-brandOrange/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>}
                     </motion.button>
                   </form>
 
@@ -1242,24 +1343,6 @@ const HomePage = () => {
             </div>
           </div>
 
-          <div className="border-t border-slate-800 pt-12 mt-12">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="text-slate-500 text-sm">
-                <p>&copy; 2026 Activerehab Chiropractic & Centre. All rights reserved.</p>
-                <p className="mt-1">Powered by <span className="text-slate-300">Crow Medico</span></p>
-              </div>
-              <div className="flex flex-wrap justify-center gap-8">
-                <a href="#" className="text-slate-500 hover:text-blue-500 text-xs transition-colors underline-offset-4 hover:underline">Privacy Policy</a>
-                <a href="#" className="text-slate-500 hover:text-blue-500 text-xs transition-colors underline-offset-4 hover:underline">Terms of Service</a>
-                <a href="#" className="text-slate-500 hover:text-blue-500 text-xs transition-colors underline-offset-4 hover:underline">Patient Rights</a>
-              </div>
-            </div>
-
-            {/* Legal Disclaimer */}
-            <div className="mt-12 text-slate-600 text-[10px] text-center max-w-4xl mx-auto border border-white/5 p-4 rounded-xl bg-white/[0.02]">
-              <p>Disclaimer: This website is for informational purposes only and does not constitute medical advice. Please consult with a healthcare professional before starting any treatment. Facebook™ Disclaimer: This site is not a part of the Facebook website or Facebook Inc. Additionally, This site is NOT endorsed by Facebook in any way. FACEBOOK is a trademark of FACEBOOK, Inc.</p>
-            </div>
-          </div>
         </div>
 
         {/* Floating Back to Top */}
